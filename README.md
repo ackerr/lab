@@ -1,10 +1,13 @@
 # Lab
 
+[![CI](https://github.com/Ackerr/lab/workflows/CI/badge.svg)](https://github.com/Ackerr/lab)
+[![Go Report Card](https://goreportcard.com/badge/github.com/ackerr/lab)](https://goreportcard.com/report/github.com/ackerr/lab)
+
 A cli tool with gitlab
 
 ## Feature
 
-  - command line fuzzy find gitlab projects, and open
+- Fuzzy find your gitlab projects, and open
 
 ## Env
 
