@@ -27,7 +27,7 @@ func searchBrowserLauncher(goos string) (browser string) {
 	case "darwin":
 		browser = "open"
 	case "windows":
-		browser = "cmd /c start"
+		browser = "start"
 	default:
 		candidates := []string{"xdg-open", "cygstart", "x-www-browser", "firefox",
 			"opera", "mozilla", "netscape"}

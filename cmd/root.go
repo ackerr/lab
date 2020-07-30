@@ -11,6 +11,7 @@ func init() {
 	rootCmd.AddCommand(fzfCmd)
 	rootCmd.AddCommand(openBrowerCmd)
 	rootCmd.AddCommand(syncCmd)
+	rootCmd.AddCommand(cloneCmd)
 }
 
 var rootCmd = &cobra.Command{
