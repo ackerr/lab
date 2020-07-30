@@ -2,6 +2,8 @@
 
 [![CI](https://github.com/Ackerr/lab/workflows/CI/badge.svg)](https://github.com/Ackerr/lab)
 [![Go Report Card](https://goreportcard.com/badge/github.com/ackerr/lab)](https://goreportcard.com/report/github.com/ackerr/lab)
+[![release](https://img.shields.io/github/v/release/ackerr/lab.svg)](https://github.com/ackerr/lab/release)
+
 
 A cli tool with gitlab
 
@@ -12,14 +14,22 @@ A cli tool with gitlab
 ## Env
 
 ```bash
-export GITLAB_BASE_URL=<GITLAB_BASE_URL>
-export GITLAB_TOKEN=<GITLAB_TOKEN>
+$ export GITLAB_BASE_URL=<GITLAB_BASE_URL>
+$ export GITLAB_TOKEN=<GITLAB_TOKEN>
 ```
 
 ## Installation
 
+### homebrew
+
 ```bash
-go get -u "github.com/ackerr/lab"
+$ brew install ackerr/tap/lab
+```
+
+### go get
+
+```bash
+$ go get -u "github.com/ackerr/lab"
 ```
 
 ## Usage
