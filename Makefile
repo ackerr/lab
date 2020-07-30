@@ -1,4 +1,5 @@
 BIN=lab
+DIST_DIR=dist
 
 .PHONY: fmt lint test build clean test_all
 
@@ -30,6 +31,6 @@ build:
 	@go build -v -o ${BIN} *.go
 
 clean:
-	@git clean -fdx ${BIN}
+	@git clean -fdx ${BIN} ${DIST_DIR}
 
 test_all: fmt lint test
