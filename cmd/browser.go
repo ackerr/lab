@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"fmt"
 	"os/exec"
 	"strings"
 
@@ -25,7 +24,7 @@ var openBrowerCmd = &cobra.Command{
 
 func openURL(project string) {
 	if project == "" {
-		project = fuzzy(internal.Config.ProjectsPath)
+		project = internal.Fuzzy(internal.Config.ProjectsPath)
 	}
 	url := internal.Config.BaseURL
 	url = strings.Join([]string{url, project, "merge_requests"}, "/")
@@ -33,7 +32,6 @@ func openURL(project string) {
 	if err != nil {
 		internal.Err(err)
 	}
-	fmt.Println(browserCmd)
 	cmd := exec.Command(browserCmd, url)
 	err = cmd.Run()
 	if err != nil {

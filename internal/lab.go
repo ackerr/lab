@@ -65,7 +65,7 @@ func Projects() []*gitlab.Project {
 
 	for curPage := 1; curPage <= totalPages; curPage++ {
 		listOpt := gitlab.ListOptions{PerPage: prePage, Page: curPage}
-		projectsOpt := gitlab.ListProjectsOptions{Simple: t, Membership: t, OrderBy: gitlab.String("name"), ListOptions: listOpt}
+		projectsOpt := gitlab.ListProjectsOptions{Simple: t, ListOptions: listOpt}
 		projects, res, err := client.Projects.ListProjects(&projectsOpt)
 		if err != nil {
 			Err(err)

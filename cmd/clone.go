@@ -15,9 +15,9 @@ func init() {
 
 var cloneCmd = &cobra.Command{
 	Use:   "clone",
-	Short: "clone the gitlab project, like git clone",
+	Short: "Clone the gitlab project, like git clone",
 	Run: func(cmd *cobra.Command, args []string) {
-		project := fuzzy(internal.Config.ProjectsPath)
+		project := internal.Fuzzy(internal.Config.ProjectsPath)
 
 		var path, giturl string
 		if len(args) > 0 {

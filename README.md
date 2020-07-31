@@ -2,14 +2,14 @@
 
 [![CI](https://github.com/Ackerr/lab/workflows/CI/badge.svg)](https://github.com/Ackerr/lab)
 [![Go Report Card](https://goreportcard.com/badge/github.com/ackerr/lab)](https://goreportcard.com/report/github.com/ackerr/lab)
-[![release](https://img.shields.io/github/v/release/ackerr/lab.svg)](https://github.com/ackerr/lab/release)
+[![release](https://img.shields.io/github/v/release/ackerr/lab.svg)](https://github.com/ackerr/lab/releases)
 
 
 A cli tool with gitlab
 
 ## Feature
 
-- Fuzzy find your gitlab projects, and open
+Fuzzy find your gitlab projects, open or clone it.
 
 ## Env
 
