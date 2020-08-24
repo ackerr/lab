@@ -9,28 +9,32 @@ import (
 	"github.com/spf13/cobra"
 )
 
+func init() {
+	syncCmd.Flags().Bool("all", false, "sync all projects, defalut sync project if you are the membership")
+}
+
 var syncCmd = &cobra.Command{
 	Use:   "sync",
 	Short: "Sync gitlab projects",
 	Run: func(cmd *cobra.Command, args []string) {
-		syncProjects()
+		syncAll, _ := cmd.Flags().GetBool("all")
+		syncProjects(syncAll)
 	},
 }
 
 // 同步项目, 顺便按字母排个序
-func syncProjects() {
-	projects := internal.Projects()
+func syncProjects(syncAll bool) {
 	file, err := os.Create(internal.Config.ProjectsPath)
 	if err != nil {
 		internal.Err(err)
 	}
+
 	defer file.Close()
-	var allNameSpace []string
-	for _, p := range projects {
-		allNameSpace = append(allNameSpace, p.PathWithNamespace)
-	}
-	sort.Strings(allNameSpace)
-	for _, ns := range allNameSpace {
-		fmt.Fprintln(file, ns)
+	ns := internal.Projects(syncAll)
+	sort.Strings(ns)
+	for _, n := range ns {
+		if n != "" {
+			fmt.Fprintln(file, n)
+		}
 	}
 }
