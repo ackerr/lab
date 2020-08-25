@@ -16,12 +16,10 @@ jobs:
     - name: Dependency
       run: make install
 
-    - name: Lint
-      run: |-
-        export PATH=$PATH:$(go env GOPATH)/bin
-        go get -u golang.org/x/lint/golint
-        golint -set_exit_status $(go list ./...)
-        go vet ./...
+    - name: golangci-lint
+      uses: golangci/golangci-lint-action@v1
+      with:
+        version: v1.29
 
     - name: Build
       run: make build

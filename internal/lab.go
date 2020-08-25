@@ -65,25 +65,22 @@ func Projects(syncAll bool) []string {
 
 	allProjects := make([]string, totalPage*prePage)
 	ns := projectNameSpaces(items)
-	for i, n := range ns {
-		allProjects[i] = n
-	}
-	bar.Add(1)
+	copy(allProjects[:len(ns)], ns)
+	_ = bar.Add(1)
 	var wg sync.WaitGroup
 	for curPage := 2; curPage <= totalPage; curPage++ {
 		wg.Add(1)
 		go func(cur int) {
 			defer wg.Done()
-			defer bar.Add(1)
 			p, _ := projects(client, cur, syncAll)
 			ns := projectNameSpaces(p)
-			for i, n := range ns {
-				allProjects[i+prePage*(cur-1)] = n
-			}
+			start := prePage * (cur - 1)
+			copy(allProjects[start:start+len(ns)], ns)
+			_ = bar.Add(1)
 		}(curPage)
 	}
 	wg.Wait()
-	bar.Finish()
+	_ = bar.Finish()
 	return allProjects
 }
 
