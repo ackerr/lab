@@ -18,14 +18,14 @@ fmt:
 
 lint:
 	@go vet ./...
-	@# go get -u golang.org/x/lint/golint
-	@golint ./...
+	@go mod tidy
+	@golangci-lint run
 
 test:
 	@go test -v -race ./...
 
 install:
-	@go get -t -d -v ./...
+	@go mod download
 
 build:
 	@go build -v -o ${BIN} *.go
@@ -33,4 +33,4 @@ build:
 clean:
 	@git clean -fdx ${BIN} ${DIST_DIR}
 
-test_all: fmt lint test
+test_all: lint test

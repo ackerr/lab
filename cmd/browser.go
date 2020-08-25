@@ -32,7 +32,8 @@ func openURL(project string) {
 	if err != nil {
 		utils.Err(err)
 	}
-	cmd := exec.Command(launcher, url)
+	args := append(launcher, url)
+	cmd := exec.Command(args[0], args[1:]...)
 	err = cmd.Run()
 	if err != nil {
 		utils.Err(err)

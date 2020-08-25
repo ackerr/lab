@@ -2,13 +2,13 @@ package utils
 
 import (
 	"errors"
+	"github.com/kballard/go-shellquote"
 	"os"
-	"os/exec"
 	"runtime"
 )
 
 // BrowserLauncher : return the browser launcher command, copy from github.com/github/hub
-func BrowserLauncher() (string, error) {
+func BrowserLauncher() ([]string, error) {
 	browser := os.Getenv("BROWSER")
 	if browser == "" {
 		browser = searchBrowserLauncher(runtime.GOOS)
@@ -17,9 +17,9 @@ func BrowserLauncher() (string, error) {
 	}
 
 	if browser == "" {
-		return "", errors.New("Please set $BROWSER to a web launcher")
+		return nil, errors.New("please set $BROWSER to a web launcher")
 	}
-	return browser, nil
+	return shellquote.Split(browser)
 }
 
 func searchBrowserLauncher(goos string) (browser string) {
@@ -27,17 +27,11 @@ func searchBrowserLauncher(goos string) (browser string) {
 	case "darwin":
 		browser = "open"
 	case "windows":
-		browser = "start"
+		browser = "cmd /c start"
+	case "linux":
+		browser = "xdg-open"
 	default:
-		candidates := []string{"xdg-open", "cygstart", "x-www-browser", "firefox",
-			"opera", "mozilla", "netscape"}
-		for _, b := range candidates {
-			path, err := exec.LookPath(b)
-			if err == nil {
-				browser = path
-				break
-			}
-		}
+		browser = ""
 	}
 	return browser
 }
