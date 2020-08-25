@@ -9,7 +9,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var openBrowerCmd = &cobra.Command{
+var browserCmd = &cobra.Command{
 	Use:   "browser",
 	Short: "Browser open the gitlab project",
 	Run: func(cmd *cobra.Command, args []string) {
@@ -28,13 +28,13 @@ func openURL(project string) {
 	}
 	url := internal.Config.BaseURL
 	url = strings.Join([]string{url, project, "merge_requests"}, "/")
-	browserCmd, err := utils.BrowserLauncher()
+	launcher, err := utils.BrowserLauncher()
 	if err != nil {
-		internal.Err(err)
+		utils.Err(err)
 	}
-	cmd := exec.Command(browserCmd, url)
+	cmd := exec.Command(launcher, url)
 	err = cmd.Run()
 	if err != nil {
-		internal.Err(err)
+		utils.Err(err)
 	}
 }

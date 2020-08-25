@@ -5,13 +5,14 @@ import (
 	"io"
 	"os"
 
+	"github.com/ackerr/lab/utils"
 	"github.com/ktr0731/go-fuzzyfinder"
 )
 
 func readLines(filePath string) (lines []string, err error) {
 	file, err := os.Open(filePath)
 	if err != nil {
-		Err("If no ~/.projects file, you should run `lab sync` first")
+		utils.Err("If no ~/.projects file, you should run `lab sync` first")
 	}
 	defer file.Close()
 	buffer := bufio.NewReader(file)
@@ -29,13 +30,13 @@ func readLines(filePath string) (lines []string, err error) {
 func Fuzzy(filePath string) string {
 	lines, err := readLines(filePath)
 	if err != nil {
-		Err(err)
+		utils.Err(err)
 	}
 	index, err := fuzzyfinder.Find(lines, func(i int) string {
 		return lines[i]
 	})
 	if err != nil {
-		Err(err)
+		utils.Err(err)
 	}
 	return lines[index]
 }

@@ -10,7 +10,7 @@ import (
 )
 
 func init() {
-	cloneCmd.Flags().Bool("https", false, "clone with https")
+	cloneCmd.Flags().Bool("https", false, "clone with https, defalut use ssh")
 }
 
 var cloneCmd = &cobra.Command{

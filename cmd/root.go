@@ -8,7 +8,7 @@ import (
 )
 
 func init() {
-	rootCmd.AddCommand(openBrowerCmd)
+	rootCmd.AddCommand(browserCmd)
 	rootCmd.AddCommand(syncCmd)
 	rootCmd.AddCommand(cloneCmd)
 }

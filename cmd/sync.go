@@ -6,6 +6,7 @@ import (
 	"sort"
 
 	"github.com/ackerr/lab/internal"
+	"github.com/ackerr/lab/utils"
 	"github.com/spf13/cobra"
 )
 
@@ -26,7 +27,7 @@ var syncCmd = &cobra.Command{
 func syncProjects(syncAll bool) {
 	file, err := os.Create(internal.Config.ProjectsPath)
 	if err != nil {
-		internal.Err(err)
+		utils.Err(err)
 	}
 
 	defer file.Close()

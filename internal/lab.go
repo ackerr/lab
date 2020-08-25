@@ -4,6 +4,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/ackerr/lab/utils"
 	"github.com/schollz/progressbar/v3"
 	"github.com/xanzy/go-gitlab"
 )
@@ -23,12 +24,12 @@ var (
 func init() {
 	token := getenv("GITLAB_TOKEN", "")
 	if len(token) == 0 {
-		Err("set the gitlab token first, like\nexport GITLAB_TOKEN='GITLAB_TOKEN'")
+		utils.Err("set the gitlab token first, like\nexport GITLAB_TOKEN='GITLAB_TOKEN'")
 	}
 
 	baseURL := getenv("GITLAB_BASE_URL", "")
 	if len(baseURL) == 0 {
-		Err("set the gitlab base url first, like\nexport GITLAB_BASE_URL='GITLAB_BASE_URL'")
+		utils.Err("set the gitlab base url first, like\nexport GITLAB_BASE_URL='GITLAB_BASE_URL'")
 	}
 	if !strings.HasPrefix(baseURL, "http") {
 		baseURL = "https://" + baseURL
@@ -39,7 +40,7 @@ func init() {
 
 	home, err := os.UserHomeDir()
 	if err != nil {
-		Err(err)
+		utils.Err(err)
 	}
 
 	Config = &gitlabConfig{
@@ -55,7 +56,7 @@ func Projects(syncAll bool) []string {
 	path := gitlab.WithBaseURL(strings.Join([]string{Config.BaseURL, "api", Config.Version}, "/"))
 	client, err := gitlab.NewClient(Config.Token, path)
 	if err != nil {
-		Err(err)
+		utils.Err(err)
 	}
 
 	prePage := 100
