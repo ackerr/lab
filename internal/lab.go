@@ -3,10 +3,17 @@ package internal
 import (
 	"os"
 	"strings"
+	"sync"
 
 	"github.com/ackerr/lab/utils"
 	"github.com/schollz/progressbar/v3"
 	"github.com/xanzy/go-gitlab"
+)
+
+var (
+	// Config is global gitlab config
+	Config  *gitlabConfig
+	prePage int = 100
 )
 
 type gitlabConfig struct {
@@ -15,11 +22,6 @@ type gitlabConfig struct {
 	Token        string
 	ProjectsPath string
 }
-
-var (
-	// Config is global gitlab config
-	Config *gitlabConfig
-)
 
 func init() {
 	token := getenv("GITLAB_TOKEN", "")
@@ -58,8 +60,6 @@ func Projects(syncAll bool) []string {
 	if err != nil {
 		utils.Err(err)
 	}
-
-	prePage := 100
 	items, totalPage := projects(client, 1, syncAll)
 	bar := progressbar.Default(int64(totalPage), "Syncing")
 
@@ -69,14 +69,20 @@ func Projects(syncAll bool) []string {
 		allProjects[i] = n
 	}
 	bar.Add(1)
+	var wg sync.WaitGroup
 	for curPage := 2; curPage <= totalPage; curPage++ {
-		p, _ := projects(client, curPage, syncAll)
-		ns := projectNameSpaces(p)
-		for i, n := range ns {
-			allProjects[i+prePage*(curPage-1)] = n
-		}
-		bar.Add(1)
+		wg.Add(1)
+		go func(cur int) {
+			defer wg.Done()
+			defer bar.Add(1)
+			p, _ := projects(client, cur, syncAll)
+			ns := projectNameSpaces(p)
+			for i, n := range ns {
+				allProjects[i+prePage*(cur-1)] = n
+			}
+		}(curPage)
 	}
+	wg.Wait()
 	bar.Finish()
 	return allProjects
 }
@@ -90,7 +96,7 @@ func projectNameSpaces(projects []*gitlab.Project) []string {
 }
 
 func projects(client *gitlab.Client, page int, syncAll bool) ([]*gitlab.Project, int) {
-	listOpt := gitlab.ListOptions{PerPage: 100, Page: page}
+	listOpt := gitlab.ListOptions{PerPage: prePage, Page: page}
 	projectsOpt := gitlab.ListProjectsOptions{Simple: gitlab.Bool(true), Membership: gitlab.Bool(!syncAll), ListOptions: listOpt}
 	projects, res, err := client.Projects.ListProjects(&projectsOpt)
 	if err != nil {
