@@ -29,14 +29,10 @@ func readLines(filePath string) (lines []string, err error) {
 // Fuzzy : fuzzy finder
 func Fuzzy(filePath string) string {
 	lines, err := readLines(filePath)
-	if err != nil {
-		utils.Err(err)
-	}
+	utils.Check(err)
 	index, err := fuzzyfinder.Find(lines, func(i int) string {
 		return lines[i]
 	})
-	if err != nil {
-		utils.Err(err)
-	}
+	utils.Check(err)
 	return lines[index]
 }

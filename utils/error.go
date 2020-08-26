@@ -5,7 +5,14 @@ import (
 	"os"
 )
 
-// Err will return the error message
+// Check : return the error message if the err is not nil
+func Check(err error) {
+	if err != nil {
+		Err(err)
+	}
+}
+
+// Err : return the error message，then exit
 func Err(msg interface{}) {
 	fmt.Println("Error:", msg)
 	os.Exit(1)

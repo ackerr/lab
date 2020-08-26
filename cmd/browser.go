@@ -29,13 +29,9 @@ func openURL(project string) {
 	url := internal.Config.BaseURL
 	url = strings.Join([]string{url, project, "merge_requests"}, "/")
 	launcher, err := utils.BrowserLauncher()
-	if err != nil {
-		utils.Err(err)
-	}
+	utils.Check(err)
 	args := append(launcher, url)
 	cmd := exec.Command(args[0], args[1:]...)
 	err = cmd.Run()
-	if err != nil {
-		utils.Err(err)
-	}
+	utils.Check(err)
 }

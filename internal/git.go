@@ -10,7 +10,5 @@ import (
 func Clone(giturl, path string) {
 	cmd := exec.Command("git", "clone", giturl, path)
 	err := cmd.Run()
-	if err != nil {
-		utils.Err(err)
-	}
+	utils.Check(err)
 }

@@ -41,9 +41,7 @@ func init() {
 	}
 
 	home, err := os.UserHomeDir()
-	if err != nil {
-		utils.Err(err)
-	}
+	utils.Check(err)
 
 	Config = &gitlabConfig{
 		BaseURL:      baseURL,
