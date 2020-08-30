@@ -7,8 +7,8 @@ import (
 )
 
 // Clone : git clone the gitlab project
-func Clone(giturl, path string) {
-	cmd := exec.Command("git", "clone", giturl, path)
+func Clone(gitURL, path string) {
+	cmd := exec.Command("git", "clone", gitURL, path)
 	err := cmd.Run()
 	utils.Check(err)
 }

@@ -42,11 +42,10 @@ func fuzzyFinder(lines []string) (filtered string) {
 	if checkCommandExists("fzf") {
 		filters := withFilter("fzf", func(in io.WriteCloser) {
 			for _, line := range lines {
-				fmt.Fprintln(in, line)
+				fmt.Sprintln(in, line)
 				time.Sleep(5 * time.Millisecond)
 			}
 		})
-		fmt.Println(filters)
 		filtered = filters[0]
 	} else {
 		index, err := fuzzyfinder.Find(lines, func(i int) string {
