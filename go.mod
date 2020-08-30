@@ -3,6 +3,7 @@ module github.com/ackerr/lab
 go 1.14
 
 require (
+	github.com/go-git/go-git/v5 v5.1.0
 	github.com/golang/protobuf v1.4.2 // indirect
 	github.com/hashicorp/go-retryablehttp v0.6.6 // indirect
 	github.com/kballard/go-shellquote v0.0.0-20180428030007-95032a82bc51

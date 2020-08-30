@@ -24,12 +24,12 @@ type gitlabConfig struct {
 }
 
 func init() {
-	token := getEnv("GITLAB_TOKEN", "")
+	token := utils.GetEnv("GITLAB_TOKEN", "")
 	if len(token) == 0 {
 		utils.Err("set the gitlab token first, like\nexport GITLAB_TOKEN='GITLAB_TOKEN'")
 	}
 
-	baseURL := getEnv("GITLAB_BASE_URL", "")
+	baseURL := utils.GetEnv("GITLAB_BASE_URL", "")
 	if len(baseURL) == 0 {
 		utils.Err("set the gitlab base url first, like\nexport GITLAB_BASE_URL='GITLAB_BASE_URL'")
 	}
@@ -45,8 +45,8 @@ func init() {
 
 	Config = &gitlabConfig{
 		BaseURL:      baseURL,
-		Version:      getEnv("GITLAB_API_VERSION", "v4"),
-		ProjectsPath: getEnv("GITLAB_PROJECT_PATH", home+"/.projects"),
+		Version:      utils.GetEnv("GITLAB_API_VERSION", "v4"),
+		ProjectsPath: utils.GetEnv("GITLAB_PROJECT_PATH", home+"/.projects"),
 		Token:        token,
 	}
 }
@@ -98,12 +98,4 @@ func projects(client *gitlab.Client, page int, syncAll bool) ([]*gitlab.Project,
 		return []*gitlab.Project{}, 0
 	}
 	return projects, res.TotalPages
-}
-
-func getEnv(key, fallback string) string {
-	value := os.Getenv(key)
-	if len(value) == 0 {
-		return fallback
-	}
-	return value
 }

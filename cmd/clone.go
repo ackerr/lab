@@ -10,7 +10,7 @@ import (
 )
 
 func init() {
-	cloneCmd.Flags().Bool("https", false, "clone with https, defalut use ssh")
+	cloneCmd.Flags().Bool("https", false, "clone with https, default use ssh")
 }
 
 var cloneCmd = &cobra.Command{
@@ -19,7 +19,7 @@ var cloneCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		project := internal.Fuzzy(internal.Config.ProjectsPath)
 
-		var path, giturl string
+		var path, gitURL string
 		if len(args) > 0 {
 			path = args[0]
 		} else {
@@ -34,11 +34,11 @@ var cloneCmd = &cobra.Command{
 			if strings.HasPrefix(baseURL, "http") {
 				baseURL = strings.Split(baseURL, "://")[1]
 			}
-			giturl = strings.Join([]string{"git@", baseURL, ":", project, ".git"}, "")
+			gitURL = strings.Join([]string{"git@", baseURL, ":", project, ".git"}, "")
 		} else {
-			giturl = strings.Join([]string{internal.Config.BaseURL, project}, "/")
+			gitURL = strings.Join([]string{internal.Config.BaseURL, project}, "/")
 		}
 		fmt.Println("Cloning", project)
-		internal.Clone(giturl, path)
+		internal.Clone(gitURL, path, useHTTPS)
 	},
 }
