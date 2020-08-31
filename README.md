@@ -2,6 +2,7 @@
 
 [![CI](https://github.com/Ackerr/lab/workflows/CI/badge.svg)](https://github.com/Ackerr/lab)
 [![Go Report Card](https://goreportcard.com/badge/github.com/ackerr/lab)](https://goreportcard.com/report/github.com/ackerr/lab)
+[![codecov](https://codecov.io/gh/Ackerr/lab/branch/master/graph/badge.svg)](https://codecov.io/gh/Ackerr/lab)
 [![release](https://img.shields.io/github/v/release/ackerr/lab.svg)](https://github.com/ackerr/lab/releases)
 
 

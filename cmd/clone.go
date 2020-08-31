@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"fmt"
 	"os"
 	"strings"
 
@@ -38,7 +37,6 @@ var cloneCmd = &cobra.Command{
 		} else {
 			gitURL = strings.Join([]string{internal.Config.BaseURL, project}, "/")
 		}
-		fmt.Println("Cloning", project)
-		internal.Clone(gitURL, path, useHTTPS)
+		_ = internal.Clone(gitURL, path, useHTTPS)
 	},
 }

@@ -6,3 +6,6 @@ vendor/
 # exe
 lab
 lab.exe
+
+# file
+.coverage

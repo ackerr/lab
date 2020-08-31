@@ -13,6 +13,18 @@ jobs:
       with:
         go-version: 1.14
 
+    - name: Set SSH/Git config
+      env:
+        PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY}}
+      run: |
+        mkdir -p ~/.ssh
+        echo "${PRIVATE_KEY}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        wc ~/.ssh/id_rsa
+        ssh-keyscan -H github.com > ~/.ssh/known_hosts
+        git config --global user.email "bot@github.com"
+        git config --global user.name "GitHub Actions"
+
     - name: Dependency
       run: make install
 
@@ -26,6 +38,15 @@ jobs:
 
     - name: Test
       run: make test
+      env:
+        GITLAB_TOKEN: gitlab token
+        GITLAB_BASE_URL: gitlab.com
+
+    - name: Coverage
+      uses: codecov/codecov-action@v1.0.0
+      with:
+         token: ${{secrets.CODECOV_TOKEN}}
+         file: .coverage
 
     - name: Release
       uses: goreleaser/goreleaser-action@master
