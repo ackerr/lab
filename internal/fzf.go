@@ -42,7 +42,7 @@ func fuzzyFinder(lines []string) (filtered string) {
 	if checkCommandExists("fzf") {
 		filters := withFilter("fzf", func(in io.WriteCloser) {
 			for _, line := range lines {
-				fmt.Sprintln(in, line)
+				fmt.Fprintln(in, line)
 				time.Sleep(5 * time.Millisecond)
 			}
 		})
@@ -59,7 +59,8 @@ func fuzzyFinder(lines []string) (filtered string) {
 
 func checkCommandExists(command string) bool {
 	_, err := exec.LookPath(command)
-	return err != nil
+	fmt.Println(err)
+	return err == nil
 }
 
 func withFilter(command string, input func(in io.WriteCloser)) []string {
