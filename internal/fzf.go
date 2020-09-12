@@ -16,7 +16,8 @@ import (
 func readLines(filePath string) (lines []string, err error) {
 	file, err := os.Open(filePath)
 	if err != nil {
-		utils.Err("If no ~/.projects file, you should run `lab sync` first")
+		msg := fmt.Sprintf("If thr file %s doesn't exist, you should run `lab sync` first", filePath)
+		utils.Err(msg)
 	}
 	defer file.Close()
 	buffer := bufio.NewReader(file)
@@ -34,11 +35,11 @@ func readLines(filePath string) (lines []string, err error) {
 func Fuzzy(filePath string) string {
 	lines, err := readLines(filePath)
 	utils.Check(err)
-	filtered := fuzzyFinder(lines)
+	filtered := FuzzyFinder(lines)
 	return filtered
 }
 
-func fuzzyFinder(lines []string) (filtered string) {
+func FuzzyFinder(lines []string) (filtered string) {
 	if checkCommandExists("fzf") {
 		filters := withFilter("fzf", func(in io.WriteCloser) {
 			for _, line := range lines {
@@ -59,7 +60,6 @@ func fuzzyFinder(lines []string) (filtered string) {
 
 func checkCommandExists(command string) bool {
 	_, err := exec.LookPath(command)
-	fmt.Println(err)
 	return err == nil
 }
 

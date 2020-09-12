@@ -14,6 +14,6 @@ func Check(err error) {
 
 // Err : return the error message，then exit
 func Err(msg interface{}) {
-	fmt.Println("Error:", msg)
+	fmt.Println(msg)
 	os.Exit(1)
 }
