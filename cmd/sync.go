@@ -11,7 +11,7 @@ import (
 )
 
 func init() {
-	syncCmd.Flags().Bool("all", false, "sync all projects, defalut sync project if you are the membership")
+	syncCmd.Flags().Bool("all", false, "sync all projects, default sync project if you are the membership")
 }
 
 var syncCmd = &cobra.Command{

@@ -22,12 +22,23 @@ var browserCmd = &cobra.Command{
 	},
 }
 
+var pageMap = map[string]string{
+	"merge_requests": "merge_requests",
+	"pipelines":      "pipelines",
+	"overview":       "",
+}
+
 func openURL(project string) {
 	if project == "" {
 		project = internal.Fuzzy(internal.Config.ProjectsPath)
 	}
 	url := internal.Config.BaseURL
-	url = strings.Join([]string{url, project, "merge_requests"}, "/")
+	pages := make([]string, 0, len(pageMap))
+	for k := range pageMap {
+		pages = append(pages, k)
+	}
+	page := pageMap[internal.FuzzyFinder(pages)]
+	url = strings.Join([]string{url, project, page}, "/")
 	launcher, err := utils.BrowserLauncher()
 	utils.Check(err)
 	args := append(launcher, url)

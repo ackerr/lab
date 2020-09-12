@@ -43,10 +43,14 @@ func init() {
 	home, err := os.UserHomeDir()
 	utils.Check(err)
 
+	if err := os.MkdirAll(home+"/.config/lab", os.ModePerm); err != nil {
+		utils.Err(err)
+	}
+
 	Config = &gitlabConfig{
 		BaseURL:      baseURL,
 		Version:      utils.GetEnv("GITLAB_API_VERSION", "v4"),
-		ProjectsPath: utils.GetEnv("GITLAB_PROJECT_PATH", home+"/.projects"),
+		ProjectsPath: home + "/.config/lab/.projects",
 		Token:        token,
 	}
 }
