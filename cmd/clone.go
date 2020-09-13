@@ -16,7 +16,7 @@ var cloneCmd = &cobra.Command{
 	Use:   "clone",
 	Short: "Clone the gitlab project, like git clone",
 	Run: func(cmd *cobra.Command, args []string) {
-		project := internal.Fuzzy(internal.Config.ProjectsPath)
+		project := internal.FuzzyLine(internal.Config.ProjectsPath)
 
 		var path, gitURL string
 		if len(args) > 0 {

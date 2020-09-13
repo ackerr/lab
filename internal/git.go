@@ -2,11 +2,12 @@ package internal
 
 import (
 	"fmt"
+	"io/ioutil"
+	"os"
+
 	"github.com/ackerr/lab/utils"
 	"github.com/go-git/go-git/v5/plumbing/transport"
 	"github.com/go-git/go-git/v5/plumbing/transport/ssh"
-	"io/ioutil"
-	"os"
 
 	"github.com/go-git/go-git/v5"
 )
@@ -29,4 +30,9 @@ func Clone(gitURL, path string, useHTTPS bool) *git.Repository {
 	})
 	utils.Check(err)
 	return r
+}
+
+// CheckInGitRepo : the coomand path in a git repo?
+func CheckInGitRepo() {
+
 }

@@ -7,7 +7,6 @@ import (
 	"os"
 	"os/exec"
 	"strings"
-	"time"
 
 	"github.com/ackerr/lab/utils"
 	"github.com/ktr0731/go-fuzzyfinder"
@@ -31,20 +30,20 @@ func readLines(filePath string) (lines []string, err error) {
 	return lines, err
 }
 
-// Fuzzy : fuzzy finder
-func Fuzzy(filePath string) string {
+// FuzzyLine : fuzzy finder file line
+func FuzzyLine(filePath string) string {
 	lines, err := readLines(filePath)
 	utils.Check(err)
 	filtered := FuzzyFinder(lines)
 	return filtered
 }
 
+// FuzzyFinder : fuzzy finder a content, if enter ctrl-c will return ""
 func FuzzyFinder(lines []string) (filtered string) {
 	if checkCommandExists("fzf") {
 		filters := withFilter("fzf", func(in io.WriteCloser) {
 			for _, line := range lines {
 				fmt.Fprintln(in, line)
-				time.Sleep(5 * time.Millisecond)
 			}
 		})
 		filtered = filters[0]

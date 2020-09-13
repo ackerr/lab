@@ -30,14 +30,23 @@ var pageMap = map[string]string{
 
 func openURL(project string) {
 	if project == "" {
-		project = internal.Fuzzy(internal.Config.ProjectsPath)
+		project = internal.FuzzyLine(internal.Config.ProjectsPath)
+	}
+	// ctrl-c
+	if project == "" {
+		return
 	}
 	url := internal.Config.BaseURL
 	pages := make([]string, 0, len(pageMap))
 	for k := range pageMap {
 		pages = append(pages, k)
 	}
-	page := pageMap[internal.FuzzyFinder(pages)]
+	key := internal.FuzzyFinder(pages)
+	// ctrl-c
+	if key == "" {
+		return
+	}
+	page := pageMap[key]
 	url = strings.Join([]string{url, project, page}, "/")
 	launcher, err := utils.BrowserLauncher()
 	utils.Check(err)
