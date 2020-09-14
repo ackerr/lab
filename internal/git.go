@@ -23,16 +23,11 @@ func Clone(gitURL, path string, useHTTPS bool) *git.Repository {
 		auth, err = ssh.NewPublicKeys("git", sshKey, "")
 		utils.Check(err)
 	}
-	r, err := git.PlainClone(path, false, &git.CloneOptions{
+	repo, err := git.PlainClone(path, false, &git.CloneOptions{
 		Auth:     auth,
 		URL:      gitURL,
 		Progress: os.Stdout,
 	})
 	utils.Check(err)
-	return r
-}
-
-// CheckInGitRepo : the coomand path in a git repo?
-func CheckInGitRepo() {
-
+	return repo
 }

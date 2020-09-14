@@ -55,7 +55,7 @@ func init() {
 	}
 }
 
-//Projects will return all projects's path with namespace
+// Projects will return all projects path with namespace
 func Projects(syncAll bool) []string {
 	path := gitlab.WithBaseURL(strings.Join([]string{Config.BaseURL, "api", Config.Version}, "/"))
 	client, err := gitlab.NewClient(Config.Token, path)

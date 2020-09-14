@@ -15,7 +15,7 @@ import (
 func readLines(filePath string) (lines []string, err error) {
 	file, err := os.Open(filePath)
 	if err != nil {
-		msg := fmt.Sprintf("If thr file %s doesn't exist, you should run `lab sync` first", filePath)
+		msg := fmt.Sprintf("file %s doesn't exist, please run `lab sync` first", filePath)
 		utils.Err(msg)
 	}
 	defer file.Close()
