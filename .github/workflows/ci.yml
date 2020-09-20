@@ -36,11 +36,11 @@ jobs:
     - name: Build
       run: make build
 
-    # - name: Test
-    #   run: make test
-    #   env:
-    #     GITLAB_TOKEN: gitlab token
-    #     GITLAB_BASE_URL: gitlab.com
+    - name: Test
+      run: make test
+      env:
+        GITLAB_TOKEN: gitlab token
+        GITLAB_BASE_URL: gitlab.com
 
     # - name: Coverage
     #   uses: codecov/codecov-action@v1.0.0

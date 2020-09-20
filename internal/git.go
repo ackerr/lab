@@ -2,41 +2,26 @@ package internal
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"strings"
 
 	"github.com/ackerr/lab/utils"
-	"github.com/go-git/go-git/v5"
-	"github.com/go-git/go-git/v5/plumbing/transport"
-	"github.com/go-git/go-git/v5/plumbing/transport/ssh"
 )
 
 func GitCommand(args ...string) (string, error) {
 	cmd := exec.Command("git", args...)
+	cmd.Stderr = os.Stderr
 	output, err := cmd.Output()
 	return string(output), err
 }
 
-// Clone : git clone the gitlab project
-func Clone(gitURL, path string, useHTTPS bool) *git.Repository {
-	var auth transport.AuthMethod
-	if !useHTTPS {
-		sshPath := fmt.Sprintf("%s/.ssh/id_rsa", os.Getenv("HOME"))
-		keyFile := utils.GetEnv("PRIVATE_KEY_PATH", sshPath)
-		sshKey, err := ioutil.ReadFile(keyFile)
-		utils.Check(err)
-		auth, err = ssh.NewPublicKeys("git", sshKey, "")
-		utils.Check(err)
-	}
-	r, err := git.PlainClone(path, false, &git.CloneOptions{
-		Auth:     auth,
-		URL:      gitURL,
-		Progress: os.Stdout,
-	})
-	utils.Check(err)
-	return r
+// Clone git clone the gitlab project
+func Clone(gitURL, path string) error {
+	cmd := exec.Command("git", "clone", gitURL, path)
+	cmd.Stderr = os.Stderr
+	cmd.Stdout = os.Stdout
+	return cmd.Run()
 }
 
 // CurrentGitRepo return the GitRepo path
