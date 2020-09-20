@@ -11,7 +11,7 @@ import (
 )
 
 var (
-	// Config is global gitlab config
+	// Config global gitlab config
 	Config  *gitlabConfig
 	prePage = 100
 )

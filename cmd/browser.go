@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"os/exec"
 	"strings"
 
 	"github.com/ackerr/lab/internal"
@@ -48,10 +47,6 @@ func openURL(project string) {
 	}
 	page := pageMap[key]
 	url = strings.Join([]string{url, project, page}, "/")
-	launcher, err := utils.BrowserLauncher()
-	utils.Check(err)
-	args := append(launcher, url)
-	cmd := exec.Command(args[0], args[1:]...)
-	err = cmd.Run()
+	err := utils.OpenBrowser(url)
 	utils.Check(err)
 }

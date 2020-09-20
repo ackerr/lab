@@ -10,6 +10,7 @@ func init() {
 	rootCmd.AddCommand(browserCmd)
 	rootCmd.AddCommand(syncCmd)
 	rootCmd.AddCommand(cloneCmd)
+	rootCmd.AddCommand(openCmd)
 }
 
 var rootCmd = &cobra.Command{
