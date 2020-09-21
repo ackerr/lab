@@ -15,7 +15,7 @@ func init() {
 }
 
 var syncCmd = &cobra.Command{
-	Use:   "sync",
+	Use:   "sync [--all]",
 	Short: "Sync gitlab projects",
 	Run: func(cmd *cobra.Command, args []string) {
 		syncAll, _ := cmd.Flags().GetBool("all")

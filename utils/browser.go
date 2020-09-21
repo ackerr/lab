@@ -2,13 +2,15 @@ package utils
 
 import (
 	"errors"
-	"github.com/kballard/go-shellquote"
 	"os"
+	"os/exec"
 	"runtime"
+
+	"github.com/kballard/go-shellquote"
 )
 
-// BrowserLauncher : return the browser launcher command, copy from github.com/github/hub
-func BrowserLauncher() ([]string, error) {
+// return the browser launcher command, copy from github.com/github/hub
+func browserLauncher() ([]string, error) {
 	browser := os.Getenv("BROWSER")
 	if browser == "" {
 		browser = searchBrowserLauncher(runtime.GOOS)
@@ -34,4 +36,15 @@ func searchBrowserLauncher(goos string) (browser string) {
 		browser = ""
 	}
 	return browser
+}
+
+// OpenBrowser open the url in web browser
+func OpenBrowser(url string) error {
+	launcher, err := browserLauncher()
+	if err != nil {
+		return err
+	}
+	args := append(launcher, url)
+	cmd := exec.Command(args[0], args[1:]...)
+	return cmd.Run()
 }
