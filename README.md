@@ -12,13 +12,6 @@ A cli tool with gitlab
 1. Fuzzy find your gitlab project, open or clone it, use `lab browser` or `lab clone`.
 2. Open the current gitlab repository in web browser, use `lab open [remote]`
 
-## Env
-
-```bash
-$ export GITLAB_BASE_URL=<GITLAB_BASE_URL>
-$ export GITLAB_TOKEN=<GITLAB_TOKEN>
-```
-
 ## Installation
 
 ### homebrew
@@ -28,6 +21,7 @@ $ brew install ackerr/tap/lab
 ```
 
 ### scoop
+
 ```bash
 $ scoop bucket add ackerr https://github.com/Ackerr/scoop-bucket
 $ scoop install ackerr/lab
@@ -39,4 +33,18 @@ $ scoop install ackerr/lab
 $ go get -u "github.com/ackerr/lab"
 ```
 
-> Use`lab -h` to see more commands.
+## Usage
+
+1. Set Environment
+
+```bash
+$ export GITLAB_BASE_URL=<GITLAB_BASE_URL>
+
+$ export GITLAB_TOKEN=<GITLAB_TOKEN>
+```
+
+2. Sync gitlab projects, use `lab sync`
+
+3. Enjoy it，fuzzy find project like `lab browser`
+
+> use `lab -h` to see more commands.  I think you will like it. (￣︶￣)
