@@ -27,14 +27,16 @@ $ export GITLAB_TOKEN=<GITLAB_TOKEN>
 $ brew install ackerr/tap/lab
 ```
 
+### scoop
+```bash
+$ scoop bucket add ackerr https://github.com/Ackerr/scoop-bucket
+$ scoop install ackerr/lab
+```
+
 ### go get
 
 ```bash
 $ go get -u "github.com/ackerr/lab"
 ```
-
-## Usage
-
-First, run `lab sync` to sync all gitlab projects, then you can fuzzy find your project and open, use `lab browser`
 
 > Use`lab -h` to see more commands.

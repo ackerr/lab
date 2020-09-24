@@ -31,8 +31,17 @@ brews:
     owner: Ackerr
     name: homebrew-tap
   description: A cli tool with gitlab.
-  homepage: https://github.com/Ackerr/lab
+  homepage: "https://github.com/Ackerr/lab"
   test: |
     system "#{bin}/lab -v"
   install: |
     bin.install "lab"
+
+scoop:
+  bucket:
+    owner: Ackerr
+    name: scoop-bucket
+  homepage: "https://github.com/Ackerr/lab"
+  persist:
+    - "data"
+    - "config.toml"
