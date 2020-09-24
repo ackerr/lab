@@ -4,7 +4,6 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/ackerr/lab)](https://goreportcard.com/report/github.com/ackerr/lab)
 [![release](https://img.shields.io/github/v/release/ackerr/lab.svg)](https://github.com/ackerr/lab/releases)
 
-
 A cli tool with gitlab
 
 ## Feature
@@ -33,18 +32,15 @@ $ scoop install ackerr/lab
 $ go get -u "github.com/ackerr/lab"
 ```
 
-## Usage
-
-1. Set Environment
+## Env
 
 ```bash
 $ export GITLAB_BASE_URL=<GITLAB_BASE_URL>
-
 $ export GITLAB_TOKEN=<GITLAB_TOKEN>
 ```
 
-2. Sync gitlab projects, use `lab sync`
+## Usage
 
-3. Enjoy it，fuzzy find project like `lab browser`
+First, sync gitlab projects, use `lab sync`, then you can fuzzy find project use `lab browser`
 
-> use `lab -h` to see more commands.  I think you will like it. (￣︶￣)
+> use `lab -h` to see more useful commands.
