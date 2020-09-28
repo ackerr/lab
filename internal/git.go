@@ -21,7 +21,21 @@ func Clone(gitURL, path string) error {
 	cmd := exec.Command("git", "clone", gitURL, path)
 	cmd.Stderr = os.Stderr
 	cmd.Stdout = os.Stdout
-	return cmd.Run()
+	err := cmd.Run()
+	if len(Config.Email) > 0 {
+		SetGitConfig("name", Config.Username, path)
+		SetGitConfig("email", Config.Email, path)
+	}
+	return err
+}
+
+func SetGitConfig(key, value, path string) (string, error) {
+	args := []string{}
+	if len(path) > 0 {
+		args = append(args, "-C", path)
+	}
+	args = append(args, "config", "user."+key, value)
+	return GitCommand(args...)
 }
 
 // CurrentGitRepo return the GitRepo path

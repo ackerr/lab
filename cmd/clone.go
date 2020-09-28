@@ -10,6 +10,7 @@ import (
 
 func init() {
 	cloneCmd.Flags().Bool("https", false, "clone with https, default use ssh")
+	cloneCmd.Flags().BoolP("current", "c", false, "clone repo to current directory")
 }
 
 var cloneCmd = &cobra.Command{
@@ -30,15 +31,24 @@ func cloneRepo(cmd *cobra.Command, args []string) {
 		path = strings.Join([]string{path, dir[len(dir)-1]}, "/")
 	}
 
+	baseURL := internal.Config.BaseURL
+	if strings.HasPrefix(baseURL, "http") {
+		baseURL = strings.Split(baseURL, "://")[1]
+	}
+
 	useHTTPS, _ := cmd.Flags().GetBool("https")
 	if !useHTTPS {
-		baseURL := internal.Config.BaseURL
-		if strings.HasPrefix(baseURL, "http") {
-			baseURL = strings.Split(baseURL, "://")[1]
-		}
 		gitURL = strings.Join([]string{"git@", baseURL, ":", project, ".git"}, "")
 	} else {
 		gitURL = strings.Join([]string{internal.Config.BaseURL, project}, "/")
+	}
+	current, _ := cmd.Flags().GetBool("current")
+	codespace := internal.Config.CodeSpace
+	if !current && len(codespace) > 0 {
+		dirs := []string{codespace, baseURL}
+		dirs = append(dirs, strings.Split(project, "/")...)
+		path = strings.Join(dirs, "/")
+		os.MkdirAll(path, 0644)
 	}
 	_ = internal.Clone(gitURL, path)
 }

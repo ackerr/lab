@@ -8,8 +8,11 @@ A cli tool with gitlab
 
 ## Feature
 
-1. Fuzzy find your gitlab project, open or clone it, use `lab browser` or `lab clone`.
+1. Fuzzy find your gitlab project, open it in web browser, use `lab browser`.
 2. Open the current gitlab repository in web browser, use `lab open [remote]`
+3. Clone gitlab repository, set default user config and manage it like gopath style, use `lab clone [-c]`
+
+> use `lab -h` to see more useful commands.
 
 ## Installation
 
@@ -32,15 +35,20 @@ $ scoop install ackerr/lab
 $ go get -u "github.com/ackerr/lab"
 ```
 
-## Env
+## Usage
+
+First, set the required environment variable
 
 ```bash
 $ export GITLAB_BASE_URL=<GITLAB_BASE_URL>
 $ export GITLAB_TOKEN=<GITLAB_TOKEN>
 ```
+Then sync gitlab projects, use `lab sync`, then you can fuzzy find project use `lab browser`
 
-## Usage
+### Optional Env:
 
-First, sync gitlab projects, use `lab sync`, then you can fuzzy find project use `lab browser`
-
-> use `lab -h` to see more useful commands.
+```bash
+$ export GITLAB_CODESPACE=<path>
+$ export GITLAB_USERNAME=<username>
+$ export GITLAB_EMAIL=<email>
+```
