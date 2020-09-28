@@ -21,6 +21,7 @@ type gitlabConfig struct {
 	Version      string
 	Token        string
 	ProjectsPath string
+	CodeSpace    string
 }
 
 func init() {
@@ -43,6 +44,14 @@ func init() {
 	home, err := os.UserHomeDir()
 	utils.Check(err)
 
+	codespace := utils.GetEnv("GITLAB_CODESPACE", "")
+	if strings.HasSuffix(codespace, "~") {
+		codespace = home + codespace[1:]
+	}
+	if strings.HasSuffix(baseURL, "/") {
+		codespace = codespace[:len(codespace)-1]
+	}
+
 	if err := os.MkdirAll(home+"/.config/lab", os.ModePerm); err != nil {
 		utils.Err(err)
 	}
@@ -52,6 +61,7 @@ func init() {
 		Version:      utils.GetEnv("GITLAB_API_VERSION", "v4"),
 		ProjectsPath: home + "/.config/lab/.projects",
 		Token:        token,
+		CodeSpace:    codespace,
 	}
 }
 
