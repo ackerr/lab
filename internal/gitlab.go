@@ -22,6 +22,8 @@ type gitlabConfig struct {
 	Token        string
 	ProjectsPath string
 	CodeSpace    string
+	Username     string
+	Email        string
 }
 
 func init() {
@@ -45,15 +47,21 @@ func init() {
 	utils.Check(err)
 
 	codespace := utils.GetEnv("GITLAB_CODESPACE", "")
-	if strings.HasSuffix(codespace, "~") {
+	if strings.HasPrefix(codespace, "~") {
 		codespace = home + codespace[1:]
 	}
-	if strings.HasSuffix(baseURL, "/") {
+	if strings.HasSuffix(codespace, "/") {
 		codespace = codespace[:len(codespace)-1]
 	}
 
 	if err := os.MkdirAll(home+"/.config/lab", os.ModePerm); err != nil {
 		utils.Err(err)
+	}
+
+	email := utils.GetEnv("GITLAB_EMAIL", "")
+	username := utils.GetEnv("GITLAB_USERNAME", "")
+	if len(username) == 0 && len(email) > 0 {
+		username = strings.Split(email, "@")[0]
 	}
 
 	Config = &gitlabConfig{
@@ -62,6 +70,8 @@ func init() {
 		ProjectsPath: home + "/.config/lab/.projects",
 		Token:        token,
 		CodeSpace:    codespace,
+		Username:     username,
+		Email:        email,
 	}
 }
 
