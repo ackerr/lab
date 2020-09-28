@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/ackerr/lab/internal"
+	"github.com/ackerr/lab/utils"
 	"github.com/spf13/cobra"
 )
 
@@ -48,7 +49,8 @@ func cloneRepo(cmd *cobra.Command, args []string) {
 		dirs := []string{codespace, baseURL}
 		dirs = append(dirs, strings.Split(project, "/")...)
 		path = strings.Join(dirs, "/")
-		os.MkdirAll(path, 0644)
+		err := os.MkdirAll(path, 0644)
+		utils.Check(err)
 	}
 	_ = internal.Clone(gitURL, path)
 }

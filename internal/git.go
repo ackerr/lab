@@ -23,19 +23,20 @@ func Clone(gitURL, path string) error {
 	cmd.Stdout = os.Stdout
 	err := cmd.Run()
 	if len(Config.Email) > 0 {
-		SetGitConfig("name", Config.Username, path)
-		SetGitConfig("email", Config.Email, path)
+		_ = SetGitConfig("name", Config.Username, path)
+		_ = SetGitConfig("email", Config.Email, path)
 	}
 	return err
 }
 
-func SetGitConfig(key, value, path string) (string, error) {
+func SetGitConfig(key, value, path string) error {
 	args := []string{}
 	if len(path) > 0 {
 		args = append(args, "-C", path)
 	}
 	args = append(args, "config", "user."+key, value)
-	return GitCommand(args...)
+	_, err := GitCommand(args...)
+	return err
 }
 
 // CurrentGitRepo return the GitRepo path
