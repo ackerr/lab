@@ -2,6 +2,7 @@ package internal
 
 import (
 	"os"
+	"path/filepath"
 	"strings"
 	"sync"
 
@@ -67,7 +68,7 @@ func Setup() {
 	utils.Check(err)
 	codespace := Config.Codespace
 	if strings.HasPrefix(codespace, "~") {
-		codespace = home + codespace[1:]
+		codespace = filepath.Join(home, codespace[1:])
 	}
 	if strings.HasSuffix(codespace, "/") {
 		codespace = codespace[:len(codespace)-1]

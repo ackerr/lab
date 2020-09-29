@@ -2,6 +2,7 @@ package internal
 
 import (
 	"os"
+	"path/filepath"
 
 	"github.com/ackerr/lab/utils"
 )
@@ -32,9 +33,9 @@ var (
 
 func init() {
 	home, _ := os.UserHomeDir()
-	LabDir = home + "/.config/lab/"
-	ConfigPath = LabDir + "config.toml"
-	ProjectPath = LabDir + ".projects"
+	LabDir = filepath.Join(home, ".config", "lab")
+	ConfigPath = filepath.Join(LabDir, "config.toml")
+	ProjectPath = filepath.Join(LabDir, ".projects")
 	err := os.MkdirAll(LabDir, 0755)
 	utils.Check(err)
 	if _, err := os.Stat(ConfigPath); os.IsNotExist(err) {
