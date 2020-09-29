@@ -10,6 +10,11 @@ import (
 	"github.com/magiconair/properties/assert"
 )
 
+func TestMain(m *testing.M) {
+	Setup()
+	os.Exit(m.Run())
+}
+
 var tempDir = filepath.Join(utils.GetEnv("ROOT", os.TempDir()), "temp")
 
 func TestCloneUseSSH(t *testing.T) {
