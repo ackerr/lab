@@ -21,7 +21,8 @@ var cloneCmd = &cobra.Command{
 }
 
 func cloneRepo(cmd *cobra.Command, args []string) {
-	project := internal.FuzzyLine(internal.Config.ProjectsPath)
+	internal.Setup()
+	project := internal.FuzzyLine(internal.ProjectPath)
 
 	var path, gitURL string
 	if len(args) > 0 {
@@ -44,12 +45,12 @@ func cloneRepo(cmd *cobra.Command, args []string) {
 		gitURL = strings.Join([]string{internal.Config.BaseURL, project}, "/")
 	}
 	current, _ := cmd.Flags().GetBool("current")
-	codespace := internal.Config.CodeSpace
+	codespace := internal.Config.Codespace
 	if !current && len(codespace) > 0 {
 		dirs := []string{codespace, baseURL}
 		dirs = append(dirs, strings.Split(project, "/")...)
 		path = strings.Join(dirs, "/")
-		err := os.MkdirAll(path, 0644)
+		err := os.MkdirAll(path, 0755)
 		utils.Check(err)
 	}
 	_ = internal.Clone(gitURL, path)

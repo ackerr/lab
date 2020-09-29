@@ -28,8 +28,9 @@ var pageMap = map[string]string{
 }
 
 func openURL(project string) {
+	internal.Setup()
 	if project == "" {
-		project = internal.FuzzyLine(internal.Config.ProjectsPath)
+		project = internal.FuzzyLine(internal.ProjectPath)
 	}
 	// ctrl-c
 	if project == "" {

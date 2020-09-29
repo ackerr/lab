@@ -1,40 +1,62 @@
 package internal
 
 import (
+	"fmt"
 	"os"
 	"strings"
 	"sync"
 
 	"github.com/ackerr/lab/utils"
+	"github.com/mitchellh/mapstructure"
 	"github.com/schollz/progressbar/v3"
+	"github.com/spf13/viper"
 	"github.com/xanzy/go-gitlab"
 )
 
 var (
 	// Config global gitlab config
-	Config  *gitlabConfig
-	prePage = 100
+	Config     *gitlabConfig
+	prePage    = 100
+	apiVersion = "v4"
 )
 
 type gitlabConfig struct {
-	BaseURL      string
-	Version      string
-	Token        string
-	ProjectsPath string
-	CodeSpace    string
-	Username     string
-	Email        string
+	BaseURL   string `toml:"base_url"`
+	Token     string `toml:"token"`
+	Codespace string `toml:"codespace"`
+	Name      string `toml:"name"`
+	Email     string `toml:"email"`
 }
 
-func init() {
-	token := utils.GetEnv("GITLAB_TOKEN", "")
-	if len(token) == 0 {
-		utils.Err("set the gitlab token first, like\nexport GITLAB_TOKEN='GITLAB_TOKEN'")
+func Setup() {
+	viper.SetConfigName("config")
+	viper.SetConfigType("toml")
+	viper.AddConfigPath(LabDir)
+
+	err := viper.ReadInConfig()
+	utils.Check(err)
+
+	Config = &gitlabConfig{}
+	decodeOpt := func(config *mapstructure.DecoderConfig) { config.TagName = "toml" }
+	err = viper.Sub("gitlab").Unmarshal(Config, decodeOpt)
+	utils.Check(err)
+	fmt.Println(Config.Codespace)
+	fmt.Println(Config.Name)
+
+	if len(Config.Token) == 0 {
+		token := utils.GetEnv("GITLAB_TOKEN", "")
+		if len(token) == 0 {
+			utils.Err("set Gitlab token first, use `lab config`")
+		}
+		Config.Token = token
 	}
 
-	baseURL := utils.GetEnv("GITLAB_BASE_URL", "")
+	baseURL := Config.BaseURL
 	if len(baseURL) == 0 {
-		utils.Err("set the gitlab base url first, like\nexport GITLAB_BASE_URL='GITLAB_BASE_URL'")
+		baseURL = utils.GetEnv("GITLAB_BASE_URL", "")
+		if len(baseURL) == 0 {
+			utils.Err("set Gitlab base url first, use `lab config`")
+		}
 	}
 	if !strings.HasPrefix(baseURL, "http") {
 		baseURL = "https://" + baseURL
@@ -42,42 +64,25 @@ func init() {
 	if strings.HasSuffix(baseURL, "/") {
 		baseURL = baseURL[:len(baseURL)-1]
 	}
+	Config.BaseURL = baseURL
 
 	home, err := os.UserHomeDir()
 	utils.Check(err)
-
-	codespace := utils.GetEnv("GITLAB_CODESPACE", "")
+	codespace := Config.Codespace
 	if strings.HasPrefix(codespace, "~") {
 		codespace = home + codespace[1:]
 	}
 	if strings.HasSuffix(codespace, "/") {
 		codespace = codespace[:len(codespace)-1]
 	}
+	Config.Codespace = codespace
 
-	if err := os.MkdirAll(home+"/.config/lab", os.ModePerm); err != nil {
-		utils.Err(err)
-	}
-
-	email := utils.GetEnv("GITLAB_EMAIL", "")
-	username := utils.GetEnv("GITLAB_USERNAME", "")
-	if len(username) == 0 && len(email) > 0 {
-		username = strings.Split(email, "@")[0]
-	}
-
-	Config = &gitlabConfig{
-		BaseURL:      baseURL,
-		Version:      utils.GetEnv("GITLAB_API_VERSION", "v4"),
-		ProjectsPath: home + "/.config/lab/.projects",
-		Token:        token,
-		CodeSpace:    codespace,
-		Username:     username,
-		Email:        email,
-	}
+	fmt.Printf("%+v", Config)
 }
 
 // Projects will return all projects path with namespace
 func Projects(syncAll bool) []string {
-	path := gitlab.WithBaseURL(strings.Join([]string{Config.BaseURL, "api", Config.Version}, "/"))
+	path := gitlab.WithBaseURL(strings.Join([]string{Config.BaseURL, "api", apiVersion}, "/"))
 	client, err := gitlab.NewClient(Config.Token, path)
 	if err != nil {
 		utils.Err(err)

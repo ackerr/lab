@@ -11,6 +11,7 @@ func init() {
 	rootCmd.AddCommand(syncCmd)
 	rootCmd.AddCommand(cloneCmd)
 	rootCmd.AddCommand(openCmd)
+	rootCmd.AddCommand(configCmd)
 }
 
 var rootCmd = &cobra.Command{

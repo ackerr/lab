@@ -25,7 +25,8 @@ var syncCmd = &cobra.Command{
 
 // 同步项目, 顺便按字母排个序
 func syncProjects(syncAll bool) {
-	file, err := os.Create(internal.Config.ProjectsPath)
+	internal.Setup()
+	file, err := os.Create(internal.ProjectPath)
 	utils.Check(err)
 
 	defer file.Close()

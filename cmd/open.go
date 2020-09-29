@@ -23,6 +23,7 @@ var openCmd = &cobra.Command{
 }
 
 func openCurrentRepo(cmd *cobra.Command, args []string) {
+	internal.Setup()
 	var remote string
 	if len(args) > 0 {
 		remote = args[0]
