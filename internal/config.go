@@ -35,6 +35,8 @@ func init() {
 	LabDir = home + "/.config/lab/"
 	ConfigPath = LabDir + "config.toml"
 	ProjectPath = LabDir + ".projects"
+	err := os.MkdirAll(LabDir, 0755)
+	utils.Check(err)
 	if _, err := os.Stat(ConfigPath); os.IsNotExist(err) {
 		file, err := os.OpenFile(ConfigPath, os.O_WRONLY|os.O_TRUNC|os.O_CREATE, 0644)
 		utils.Check(err)

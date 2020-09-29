@@ -1,7 +1,6 @@
 package internal
 
 import (
-	"fmt"
 	"os"
 	"strings"
 	"sync"
@@ -40,8 +39,6 @@ func Setup() {
 	decodeOpt := func(config *mapstructure.DecoderConfig) { config.TagName = "toml" }
 	err = viper.Sub("gitlab").Unmarshal(Config, decodeOpt)
 	utils.Check(err)
-	fmt.Println(Config.Codespace)
-	fmt.Println(Config.Name)
 
 	if len(Config.Token) == 0 {
 		token := utils.GetEnv("GITLAB_TOKEN", "")
@@ -76,8 +73,6 @@ func Setup() {
 		codespace = codespace[:len(codespace)-1]
 	}
 	Config.Codespace = codespace
-
-	fmt.Printf("%+v", Config)
 }
 
 // Projects will return all projects path with namespace
