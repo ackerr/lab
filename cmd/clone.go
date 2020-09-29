@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/ackerr/lab/internal"
@@ -23,6 +24,9 @@ var cloneCmd = &cobra.Command{
 func cloneRepo(cmd *cobra.Command, args []string) {
 	internal.Setup()
 	project := internal.FuzzyLine(internal.ProjectPath)
+	if project == "" {
+		return
+	}
 
 	var path, gitURL string
 	if len(args) > 0 {
@@ -49,7 +53,7 @@ func cloneRepo(cmd *cobra.Command, args []string) {
 	if !current && len(codespace) > 0 {
 		dirs := []string{codespace, baseURL}
 		dirs = append(dirs, strings.Split(project, "/")...)
-		path = strings.Join(dirs, "/")
+		path = filepath.Join(dirs...)
 		err := os.MkdirAll(path, 0755)
 		utils.Check(err)
 	}

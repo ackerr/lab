@@ -37,18 +37,6 @@ $ go get -u "github.com/ackerr/lab"
 
 ## Usage
 
-First, set the required environment variable
+First, use `lab config` to set the required variable
 
-```bash
-$ export GITLAB_BASE_URL=<GITLAB_BASE_URL>
-$ export GITLAB_TOKEN=<GITLAB_TOKEN>
-```
-Then sync gitlab projects, use `lab sync`, then you can fuzzy find project use `lab browser`
-
-### Optional Env:
-
-```bash
-$ export GITLAB_CODESPACE=<path>
-$ export GITLAB_USERNAME=<username>
-$ export GITLAB_EMAIL=<email>
-```
+Then sync gitlab projects, use `lab sync`, then you can fuzzy find project use `lab browser` and more

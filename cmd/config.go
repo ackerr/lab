@@ -21,6 +21,5 @@ func editConfig(cmd *cobra.Command, args []string) {
 	command := exec.Command(editor, configPath)
 	command.Stdin = os.Stdin
 	command.Stdout = os.Stdout
-	err := command.Run()
-	utils.Check(err)
+	_ = command.Run()
 }

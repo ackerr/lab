@@ -1,11 +1,13 @@
 package internal
 
 import (
+	"bytes"
 	"os"
 	"path/filepath"
 	"strings"
 	"sync"
 
+	"github.com/a8m/envsubst"
 	"github.com/ackerr/lab/utils"
 	"github.com/mitchellh/mapstructure"
 	"github.com/schollz/progressbar/v3"
@@ -29,11 +31,10 @@ type gitlabConfig struct {
 }
 
 func Setup() {
-	viper.SetConfigName("config")
-	viper.SetConfigType("toml")
+	buf, err := envsubst.ReadFile(ConfigPath)
+	utils.Check(err)
 	viper.AddConfigPath(LabDir)
-
-	err := viper.ReadInConfig()
+	err = viper.ReadConfig(bytes.NewReader(buf))
 	utils.Check(err)
 
 	Config = &gitlabConfig{}
@@ -42,19 +43,12 @@ func Setup() {
 	utils.Check(err)
 
 	if len(Config.Token) == 0 {
-		token := utils.GetEnv("GITLAB_TOKEN", "")
-		if len(token) == 0 {
-			utils.Err("set Gitlab token first, use `lab config`")
-		}
-		Config.Token = token
+		utils.Err("set Gitlab token first, use `lab config`")
 	}
 
 	baseURL := Config.BaseURL
 	if len(baseURL) == 0 {
-		baseURL = utils.GetEnv("GITLAB_BASE_URL", "")
-		if len(baseURL) == 0 {
-			utils.Err("set Gitlab base url first, use `lab config`")
-		}
+		utils.Err("set Gitlab base url first, use `lab config`")
 	}
 	if !strings.HasPrefix(baseURL, "http") {
 		baseURL = "https://" + baseURL

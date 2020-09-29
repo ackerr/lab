@@ -9,13 +9,13 @@ import (
 
 var template = []byte(`[gitlab]
 # Gitlab domain, like https://gitlab.com
-base_url = ""
+base_url = "$GITLAB_BASE_URL"
 
 # Gitlab api token
-token = ""
+token = "$GITLAB_TOKEN"
 
 # Optional
-# A directory, If you want $GOPATH/src style manager your repo，set codesapce
+# A directory path, If you want $GOPATH/src style manager your repo，set codesapce like "~/workdir"
 codespace = ""
 
 # Default git config user.name
