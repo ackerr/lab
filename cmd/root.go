@@ -12,6 +12,7 @@ func init() {
 	rootCmd.AddCommand(cloneCmd)
 	rootCmd.AddCommand(openCmd)
 	rootCmd.AddCommand(configCmd)
+	rootCmd.AddCommand(ciCmd)
 }
 
 var rootCmd = &cobra.Command{

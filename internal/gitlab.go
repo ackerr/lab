@@ -70,13 +70,19 @@ func Setup() {
 	Config.Codespace = codespace
 }
 
-// Projects will return all projects path with namespace
-func Projects(syncAll bool) []string {
+func NewClient() *gitlab.Client {
+	Setup()
 	path := gitlab.WithBaseURL(strings.Join([]string{Config.BaseURL, "api", apiVersion}, "/"))
 	client, err := gitlab.NewClient(Config.Token, path)
 	if err != nil {
 		utils.Err(err)
 	}
+	return client
+}
+
+// Projects will return all projects path with namespace
+func Projects(syncAll bool) []string {
+	client := NewClient()
 	items, totalPage := projects(client, 1, syncAll)
 	bar := progressbar.Default(int64(totalPage), "Syncing")
 
@@ -117,4 +123,19 @@ func projects(client *gitlab.Client, page int, syncAll bool) ([]*gitlab.Project,
 		return []*gitlab.Project{}, 0
 	}
 	return projects, res.TotalPages
+}
+
+// TransferGitURLToProject example:
+// git@gitlab.com/Ackerr:lab.git     -> Ackerr/lab
+// https://gitlab.com/Ackerr/lab.git -> Ackerr/lab
+func TransferGitURLToProject(gitURL string) string {
+	var url string
+	if strings.HasPrefix(gitURL, "https://") {
+		url = gitURL[len(Config.BaseURL) : len(gitURL)-4]
+	}
+	if strings.HasPrefix(gitURL, "git@") {
+		url = gitURL[:len(gitURL)-4]
+		url = strings.Split(url, ":")[1]
+	}
+	return url
 }
