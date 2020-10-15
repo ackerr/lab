@@ -54,6 +54,10 @@ func cloneRepo(cmd *cobra.Command, args []string) {
 		dirs := []string{codespace, baseURL}
 		dirs = append(dirs, strings.Split(project, "/")...)
 		path = filepath.Join(dirs...)
+		if utils.FileExists(path) {
+			_ = internal.Fetch(path)
+			return
+		}
 		err := os.MkdirAll(path, 0755)
 		utils.Check(err)
 	}

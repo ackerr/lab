@@ -31,6 +31,14 @@ func Clone(gitURL, path string) error {
 	return err
 }
 
+func Fetch(path string) error {
+	cmd := exec.Command("git", "-C", path, "fetch", "--all")
+	cmd.Stderr = os.Stderr
+	cmd.Stdout = os.Stdout
+	err := cmd.Run()
+	return err
+}
+
 func SetGitConfig(key, value, path string) error {
 	args := []string{}
 	if len(path) > 0 {

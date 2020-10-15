@@ -1,34 +1,33 @@
 package cmd
 
 import (
-	"strings"
+	"fmt"
 
 	"github.com/ackerr/lab/internal"
 	"github.com/ackerr/lab/utils"
 	"github.com/spf13/cobra"
 )
 
+func init() {
+	browserCmd.Flags().BoolP("pipelines", "p", false, "open pipeline page")
+	browserCmd.Flags().BoolP("merge_requests", "m", false, "open merge_requests page")
+}
+
 var browserCmd = &cobra.Command{
 	Use:   "browser",
 	Short: "Browser open the gitlab project",
-	Run: func(cmd *cobra.Command, args []string) {
-		if len(args) > 0 {
-			project := args[0]
-			openURL(project)
-		} else {
-			openURL("")
-		}
-	},
+	Run:   openURL,
 }
 
-var pageMap = map[string]string{
-	"merge_requests": "merge_requests",
-	"pipelines":      "pipelines",
-	"overview":       "",
-}
-
-func openURL(project string) {
+func openURL(cmd *cobra.Command, args []string) {
 	internal.Setup()
+
+	var project string
+	if len(args) > 0 {
+		project = args[0]
+	} else {
+		project = ""
+	}
 	if project == "" {
 		project = internal.FuzzyLine(internal.ProjectPath)
 	}
@@ -36,18 +35,21 @@ func openURL(project string) {
 	if project == "" {
 		return
 	}
-	url := internal.Config.BaseURL
-	pages := make([]string, 0, len(pageMap))
-	for k := range pageMap {
-		pages = append(pages, k)
+
+	url := fmt.Sprintf("%s/%s", internal.Config.BaseURL, project)
+
+	subpage := ""
+	isPL, _ := cmd.Flags().GetBool("pipelines")
+	if isPL {
+		subpage = "pipelines"
 	}
-	key := internal.FuzzyFinder(pages)
-	// ctrl-c
-	if key == "" {
-		return
+	isMR, _ := cmd.Flags().GetBool("merge_requests")
+	if isMR {
+		subpage = "merge_requests"
 	}
-	page := pageMap[key]
-	url = strings.Join([]string{url, project, page}, "/")
+	if len(subpage) > 0 {
+		url = fmt.Sprintf("%s/-/%s", url, subpage)
+	}
 	err := utils.OpenBrowser(url)
 	utils.Check(err)
 }
