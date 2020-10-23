@@ -45,7 +45,7 @@ func currentJobs(cmd *cobra.Command, args []string) {
 	client := internal.NewClient()
 	p, _, err := client.Projects.GetProject(project, &gitlab.GetProjectOptions{})
 	utils.Check(err)
-	c, resp, err := client.Commits.GetCommit(p.ID, branch)
+	c, resp, _ := client.Commits.GetCommit(p.ID, branch)
 	if resp.StatusCode == 404 {
 		utils.Err(fmt.Sprintf("branch %s/%s not exist!", remote, branch))
 	}
@@ -85,8 +85,10 @@ func doTrace(client *gitlab.Client, pid interface{}, job *gitlab.Job) error {
 	prefix := utils.RandomColor(fmt.Sprintf("[%s] \u001b[0m", job.Name))
 	for range time.NewTicker(time.Second * 3).C {
 		trace, _, err := client.Jobs.GetTraceFile(pid, job.ID)
+		utils.Check(err)
 		prefixReader := prefixer.New(trace, prefix)
 		_, err = io.CopyN(ioutil.Discard, prefixReader, offset)
+		utils.Check(err)
 		lenT, err := io.Copy(os.Stdout, prefixReader)
 		if err != nil && err != io.EOF {
 			log.Println(err)
@@ -99,6 +101,7 @@ func doTrace(client *gitlab.Client, pid interface{}, job *gitlab.Job) error {
 			return nil
 		}
 		job, _, err = client.Jobs.GetJob(pid, job.ID)
+		utils.Check(err)
 	}
 	return nil
 }
