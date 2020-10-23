@@ -77,3 +77,22 @@ func withFilter(command string, input func(in io.WriteCloser)) []string {
 	result, _ := cmd.Output()
 	return strings.Split(string(result), "\n")
 }
+
+func FuzzyMultiFinder(lines []string) (filtered []string) {
+	if checkCommandExists("fzf") {
+		filtered = withFilter("fzf -m --ansi", func(in io.WriteCloser) {
+			for _, line := range lines {
+				fmt.Fprintln(in, line)
+			}
+		})
+	} else {
+		index, err := fuzzyfinder.FindMulti(lines, func(i int) string {
+			return lines[i]
+		})
+		utils.Check(err)
+		for _, i := range index {
+			filtered = append(filtered, lines[i])
+		}
+	}
+	return
+}

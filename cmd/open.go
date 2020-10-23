@@ -28,10 +28,7 @@ func openCurrentRepo(cmd *cobra.Command, args []string) {
 	if len(args) > 0 {
 		remote = args[0]
 	}
-	_, err := internal.CurrentGitRepo()
-	if err != nil {
-		utils.Err("not a git repository")
-	}
+	_, _ = internal.CurrentGitRepo()
 	if remote == "" {
 		branch := internal.CurrentBranch()
 		remote = internal.CurrentRemote(branch)
@@ -54,6 +51,6 @@ func openCurrentRepo(cmd *cobra.Command, args []string) {
 	if len(subpage) > 0 {
 		url = fmt.Sprintf("%s/-/%s", url, subpage)
 	}
-	err = utils.OpenBrowser(url)
+	err := utils.OpenBrowser(url)
 	utils.Check(err)
 }
