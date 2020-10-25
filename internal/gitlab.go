@@ -2,13 +2,20 @@ package internal
 
 import (
 	"bytes"
+	"fmt"
+	"io"
+	"io/ioutil"
+	"log"
 	"os"
 	"path/filepath"
 	"strings"
 	"sync"
+	"sync/atomic"
+	"time"
 
 	"github.com/a8m/envsubst"
 	"github.com/ackerr/lab/utils"
+	"github.com/goware/prefixer"
 	"github.com/mitchellh/mapstructure"
 	"github.com/schollz/progressbar/v3"
 	"github.com/spf13/viper"
@@ -138,4 +145,83 @@ func TransferGitURLToProject(gitURL string) string {
 		url = strings.Split(url, ":")[1]
 	}
 	return url
+}
+
+func TraceJobs(client *gitlab.Client, pid interface{}, jobs []*gitlab.Job, isAll bool) {
+	if isAll {
+		traceAllJobs(client, pid, jobs)
+		return
+	}
+	traceRunningJobs(client, pid, jobs)
+}
+
+func traceRunningJobs(client *gitlab.Client, pid interface{}, jobs []*gitlab.Job) {
+	wg := sync.WaitGroup{}
+	for _, job := range jobs {
+		wg.Add(1)
+		go func(j *gitlab.Job) {
+			_ = doTrace(client, pid, j)
+			wg.Done()
+		}(job)
+	}
+	wg.Wait()
+	log.Println("\u001b[38;1mall jobs done")
+}
+
+func traceAllJobs(client *gitlab.Client, pid interface{}, jobs []*gitlab.Job) {
+	m := make(map[string]*gitlab.Job)
+	j := make([]string, 0)
+	for _, job := range jobs {
+		d := fmt.Sprintf("%-20s\t%-10s\t%-10s", job.Name, job.Status, job.Stage)
+		m[d] = job
+		j = append(j, d)
+	}
+	names := FuzzyMultiFinder(j)
+	if len(names[0]) == 0 {
+		return
+	}
+	// remove the last empty item
+	names = names[:len(names)-1]
+
+	wg := sync.WaitGroup{}
+	wg.Add(len(names))
+	for _, name := range names {
+		go func(n string) {
+			_ = doTrace(client, pid, m[n])
+			wg.Done()
+		}(name)
+	}
+	wg.Wait()
+
+}
+
+func isRunning(status string) bool {
+	if status == "success" || status == "failed" || status == "cancelled" {
+		return false
+	}
+	return true
+}
+
+func doTrace(client *gitlab.Client, pid interface{}, job *gitlab.Job) error {
+	var offset int64
+	prefix := utils.RandomColor(fmt.Sprintf("[%s] \u001b[0m", job.Name))
+	for range time.NewTicker(time.Second * 3).C {
+		trace, _, err := client.Jobs.GetTraceFile(pid, job.ID)
+		utils.Check(err)
+		prefixReader := prefixer.New(trace, prefix)
+		_, err = io.CopyN(ioutil.Discard, prefixReader, offset)
+		utils.Check(err)
+		lenT, err := io.Copy(os.Stdout, prefixReader)
+		if err != nil && err != io.EOF {
+			log.Println(err)
+			return err
+		}
+		atomic.AddInt64(&offset, lenT)
+		if !isRunning(job.Status) {
+			return nil
+		}
+		job, _, err = client.Jobs.GetJob(pid, job.ID)
+		utils.Check(err)
+	}
+	return nil
 }
