@@ -13,6 +13,7 @@ import (
 func init() {
 	cloneCmd.Flags().Bool("https", false, "clone with https, default use ssh")
 	cloneCmd.Flags().BoolP("current", "c", false, "clone repo to current directory")
+	rootCmd.AddCommand(cloneCmd)
 }
 
 var cloneCmd = &cobra.Command{

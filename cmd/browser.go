@@ -11,6 +11,7 @@ import (
 func init() {
 	browserCmd.Flags().BoolP("pipelines", "p", false, "open pipeline page")
 	browserCmd.Flags().BoolP("merge_requests", "m", false, "open merge_requests page")
+	rootCmd.AddCommand(browserCmd)
 }
 
 var browserCmd = &cobra.Command{

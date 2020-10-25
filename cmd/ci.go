@@ -14,6 +14,7 @@ func init() {
 	ciCmd.Flags().StringP("remote", "r", "", "the remote's pipeline")
 	ciCmd.Flags().StringP("branch", "b", "", "the branch's pipeline")
 	ciCmd.Flags().BoolP("all", "l", false, "view all jobs, default view running job")
+	rootCmd.AddCommand(ciCmd)
 }
 
 var ciCmd = &cobra.Command{

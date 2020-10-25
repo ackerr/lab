@@ -14,6 +14,7 @@ func init() {
 	openCmd.Flags().BoolP("pipelines", "p", false, "open pipeline page")
 	openCmd.Flags().BoolP("merge_requests", "m", false, "open merge_requests page")
 	openCmd.Flags().StringVar(&subpage, "subpage", "", "open the input subpage")
+	rootCmd.AddCommand(openCmd)
 }
 
 var openCmd = &cobra.Command{

@@ -6,15 +6,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func init() {
-	rootCmd.AddCommand(browserCmd)
-	rootCmd.AddCommand(syncCmd)
-	rootCmd.AddCommand(cloneCmd)
-	rootCmd.AddCommand(openCmd)
-	rootCmd.AddCommand(configCmd)
-	rootCmd.AddCommand(ciCmd)
-}
-
 var rootCmd = &cobra.Command{
 	Use:   "lab",
 	Short: "Lab is a cli tool, include some shortcut for gitlab",
