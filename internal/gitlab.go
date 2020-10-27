@@ -147,28 +147,37 @@ func TransferGitURLToProject(gitURL string) string {
 	return url
 }
 
-func TraceJobs(client *gitlab.Client, pid interface{}, jobs []*gitlab.Job, isAll bool) {
+// TODO define a job struct
+func TraceJobs(client *gitlab.Client, pid interface{}, jobs []*gitlab.Job, isAll bool, tailLine int64) {
 	if isAll {
-		traceAllJobs(client, pid, jobs)
+		traceAllJobs(client, pid, jobs, tailLine)
 		return
 	}
-	traceRunningJobs(client, pid, jobs)
+	traceRunningJobs(client, pid, jobs, tailLine)
 }
 
-func traceRunningJobs(client *gitlab.Client, pid interface{}, jobs []*gitlab.Job) {
+func traceRunningJobs(client *gitlab.Client, pid interface{}, jobs []*gitlab.Job, tailLine int64) {
 	wg := sync.WaitGroup{}
-	for _, job := range jobs {
+	var isLast bool
+	for i, job := range jobs {
+		// the last  always output
+		if i == len(jobs)-1 {
+			isLast = true
+		}
+		if !isRunning(job.Status) && !isLast {
+			continue
+		}
 		wg.Add(1)
 		go func(j *gitlab.Job) {
-			_ = doTrace(client, pid, j)
+			_ = doTrace(client, pid, j, tailLine)
 			wg.Done()
 		}(job)
 	}
 	wg.Wait()
-	log.Println("\u001b[38;1mall jobs done")
+	println("\u001b[38;1mall jobs done")
 }
 
-func traceAllJobs(client *gitlab.Client, pid interface{}, jobs []*gitlab.Job) {
+func traceAllJobs(client *gitlab.Client, pid interface{}, jobs []*gitlab.Job, tailLine int64) {
 	m := make(map[string]*gitlab.Job)
 	j := make([]string, 0)
 	for _, job := range jobs {
@@ -187,12 +196,11 @@ func traceAllJobs(client *gitlab.Client, pid interface{}, jobs []*gitlab.Job) {
 	wg.Add(len(names))
 	for _, name := range names {
 		go func(n string) {
-			_ = doTrace(client, pid, m[n])
+			_ = doTrace(client, pid, m[n], tailLine)
 			wg.Done()
 		}(name)
 	}
 	wg.Wait()
-
 }
 
 func isRunning(status string) bool {
@@ -202,16 +210,36 @@ func isRunning(status string) bool {
 	return true
 }
 
-func doTrace(client *gitlab.Client, pid interface{}, job *gitlab.Job) error {
+func doTrace(client *gitlab.Client, pid interface{}, job *gitlab.Job, tailLine int64) error {
 	var offset int64
+	firstTail := true
 	prefix := utils.RandomColor(fmt.Sprintf("[%s] \u001b[0m", job.Name))
 	for range time.NewTicker(time.Second * 3).C {
 		trace, _, err := client.Jobs.GetTraceFile(pid, job.ID)
 		utils.Check(err)
 		prefixReader := prefixer.New(trace, prefix)
-		_, err = io.CopyN(ioutil.Discard, prefixReader, offset)
-		utils.Check(err)
-		lenT, err := io.Copy(os.Stdout, prefixReader)
+		var output io.Writer
+		if firstTail {
+			buf, err := ioutil.ReadAll(prefixReader)
+			file, _ := ioutil.TempFile("", "trace-log")
+			file.Write(buf)
+			utils.Check(err)
+			var lines []string
+			lines = append(lines, strings.Split(string(buf), "\n")...)
+			begin := int64(len(lines)) - tailLine
+			if begin > 0 {
+				for _, line := range lines[begin:] {
+					println(line)
+				}
+			}
+			firstTail = false
+			output = ioutil.Discard
+		} else {
+			_, err = io.CopyN(ioutil.Discard, prefixReader, offset)
+			utils.Check(err)
+			output = os.Stdout
+		}
+		lenT, err := io.Copy(output, prefixReader)
 		if err != nil && err != io.EOF {
 			log.Println(err)
 			return err

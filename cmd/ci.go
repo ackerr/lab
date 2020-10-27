@@ -10,10 +10,13 @@ import (
 	"github.com/xanzy/go-gitlab"
 )
 
+var tailLine int64
+
 func init() {
 	ciCmd.Flags().StringP("remote", "r", "", "the remote's pipeline")
 	ciCmd.Flags().StringP("branch", "b", "", "the branch's pipeline")
 	ciCmd.Flags().BoolP("all", "l", false, "view all jobs, default view running job")
+	ciCmd.Flags().Int64VarP(&tailLine, "lines", "n", 30, "display the last part of a job log")
 	rootCmd.AddCommand(ciCmd)
 }
 
@@ -53,9 +56,9 @@ func currentJobs(cmd *cobra.Command, args []string) {
 	opt := &gitlab.ListProjectPipelinesOptions{SHA: &c.ID}
 	pipelines, _, err := client.Pipelines.ListProjectPipelines(p.ID, opt)
 	utils.Check(err)
-	jobs, _, err := client.Jobs.ListPipelineJobs(p.ID, pipelines[0].ID, nil)
+	jobs, _, err := client.Jobs.ListPipelineJobs(p.ID, pipelines[0].ID, &gitlab.ListJobsOptions{})
 	utils.Check(err)
 
 	isAll, _ := cmd.Flags().GetBool("all")
-	internal.TraceJobs(client, p.ID, jobs, isAll)
+	internal.TraceJobs(client, p.ID, jobs, isAll, tailLine)
 }
