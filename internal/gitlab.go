@@ -222,14 +222,18 @@ func doTrace(client *gitlab.Client, pid interface{}, job *gitlab.Job, tailLine i
 		if firstTail {
 			buffer, err := ioutil.ReadAll(prefixReader)
 			utils.Check(err)
+			prefixReader = prefixer.New(bytes.NewReader(buffer), "")
 			var lines []string
 			lines = append(lines, strings.Split(string(buffer), "\n")...)
 			begin := int64(len(lines)) - tailLine
+			end := len(lines) - 1
 			if begin < 0 {
 				begin = 0
 			}
-			for _, line := range lines[begin:] {
-				println(line)
+			if end > 0 {
+				for _, line := range lines[begin:end] {
+					println(line)
+				}
 			}
 			firstTail = false
 			output = ioutil.Discard
