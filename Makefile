@@ -1,3 +1,5 @@
+VERSION=0.2.2
+
 BIN=lab
 DIST_DIR=dist
 TEMP_DIR=temp
@@ -53,3 +55,6 @@ coverage_html:
 	go tool cover -html ${COVERAGE_FILE}
 
 test_all: lint test
+
+release:
+	@bumpversion patch
