@@ -1,7 +1,20 @@
 run:
-  timeout: 1m
+  timeout: 10s
 
 linters:
   enable:
     - gofmt
     - golint
+    - bodyclose
+    - dupl
+    - exportloopref
+    - goconst
+    - goimports
+    - gomnd
+    - goprintffuncname
+    - misspell
+    - prealloc
+    - rowserrcheck
+    - unconvert
+    - unparam
+    - whitespace

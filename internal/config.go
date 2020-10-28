@@ -23,6 +23,9 @@ name = ""
 
 # Default git config user.name
 email = ""
+
+[main]
+theme_color = "79"
 `)
 
 var (

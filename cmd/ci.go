@@ -2,10 +2,13 @@ package cmd
 
 import (
 	"fmt"
+	"net/http"
 	"strings"
 
 	"github.com/ackerr/lab/internal"
+	"github.com/ackerr/lab/internal/ui"
 	"github.com/ackerr/lab/utils"
+	tea "github.com/charmbracelet/bubbletea"
 	"github.com/spf13/cobra"
 	"github.com/xanzy/go-gitlab"
 )
@@ -50,7 +53,7 @@ func currentJobs(cmd *cobra.Command, args []string) {
 	p, _, err := client.Projects.GetProject(project, &gitlab.GetProjectOptions{})
 	utils.Check(err)
 	c, resp, _ := client.Commits.GetCommit(p.ID, branch)
-	if resp.StatusCode == 404 {
+	if resp.StatusCode == http.StatusNotFound {
 		utils.Err(fmt.Sprintf("branch %s/%s not exist!", remote, branch))
 	}
 	opt := &gitlab.ListProjectPipelinesOptions{SHA: &c.ID}
@@ -60,5 +63,19 @@ func currentJobs(cmd *cobra.Command, args []string) {
 	utils.Check(err)
 
 	isAll, _ := cmd.Flags().GetBool("all")
-	internal.TraceJobs(client, p.ID, jobs, isAll, tailLine)
+	if isAll {
+		jobUI(client, p.ID, jobs)
+		return
+	}
+	allDone := internal.TraceRunningJobs(client, p.ID, jobs, tailLine)
+	if allDone {
+		jobUI(client, p.ID, jobs)
+	}
+}
+
+func jobUI(client *gitlab.Client, pid interface{}, jobs []*gitlab.Job) {
+	model := ui.NewJobUI(client, pid, jobs, tailLine)
+	program := tea.NewProgram(model)
+	err := program.Start()
+	utils.Check(err)
 }
