@@ -172,7 +172,7 @@ func traceRunningJobs(client *gitlab.Client, pid interface{}, jobs []*gitlab.Job
 	}
 	wg.Wait()
 	if allDone {
-		println("all jobs done")
+		println("All jobs done!")
 		traceAllJobs(client, pid, jobs, tailLine)
 	}
 }
@@ -218,10 +218,10 @@ func doTrace(client *gitlab.Client, pid interface{}, job *gitlab.Job, tailLine i
 		trace, _, err := client.Jobs.GetTraceFile(pid, job.ID)
 		utils.Check(err)
 		prefixReader := prefixer.New(trace, prefix)
-		buffer, err := ioutil.ReadAll(prefixReader)
-		utils.Check(err)
 		var output io.Writer
 		if firstTail {
+			buffer, err := ioutil.ReadAll(prefixReader)
+			utils.Check(err)
 			var lines []string
 			lines = append(lines, strings.Split(string(buffer), "\n")...)
 			begin := int64(len(lines)) - tailLine
@@ -238,7 +238,7 @@ func doTrace(client *gitlab.Client, pid interface{}, job *gitlab.Job, tailLine i
 			utils.Check(err)
 			output = os.Stdout
 		}
-		lenT, err := output.Write(buffer)
+		lenT, err := io.Copy(output, prefixReader)
 		if err != nil && err != io.EOF {
 			log.Println(err)
 			return err
