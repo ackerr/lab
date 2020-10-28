@@ -15,14 +15,14 @@ var tailLine int64
 func init() {
 	ciCmd.Flags().StringP("remote", "r", "", "the remote's pipeline")
 	ciCmd.Flags().StringP("branch", "b", "", "the branch's pipeline")
-	ciCmd.Flags().BoolP("all", "l", false, "view all jobs, default view running job")
-	ciCmd.Flags().Int64VarP(&tailLine, "lines", "n", 30, "display the last part of a job log")
+	ciCmd.Flags().BoolP("all", "l", false, "view all jobs, use <tab> to view multiple jobs")
+	ciCmd.Flags().Int64VarP(&tailLine, "lines", "n", 20, "display the last part of a job log")
 	rootCmd.AddCommand(ciCmd)
 }
 
 var ciCmd = &cobra.Command{
 	Use:   "ci",
-	Short: "View the pipeline jobs trace log",
+	Short: "View the pipeline jobs trace log, default view running job,",
 	Run:   currentJobs,
 }
 

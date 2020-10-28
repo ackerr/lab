@@ -4,11 +4,9 @@ go 1.14
 
 require (
 	github.com/a8m/envsubst v1.2.0
-	github.com/gcla/tail v1.0.0
 	github.com/golang/protobuf v1.4.2 // indirect
 	github.com/goware/prefixer v0.0.0-20160118172347-395022866408
 	github.com/hashicorp/go-retryablehttp v0.6.6 // indirect
-	github.com/hpcloud/tail v1.0.0 // indirect
 	github.com/kballard/go-shellquote v0.0.0-20180428030007-95032a82bc51
 	github.com/kr/text v0.2.0 // indirect
 	github.com/ktr0731/go-fuzzyfinder v0.2.1
@@ -25,6 +23,4 @@ require (
 	google.golang.org/appengine v1.6.6 // indirect
 	google.golang.org/protobuf v1.25.0 // indirect
 	gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f // indirect
-	gopkg.in/fsnotify.v1 v1.4.7 // indirect
-	gopkg.in/tomb.v1 v1.0.0-20141024135613-dd632973f1e7 // indirect
 )

@@ -158,15 +158,12 @@ func TraceJobs(client *gitlab.Client, pid interface{}, jobs []*gitlab.Job, isAll
 
 func traceRunningJobs(client *gitlab.Client, pid interface{}, jobs []*gitlab.Job, tailLine int64) {
 	wg := sync.WaitGroup{}
-	var isLast bool
-	for i, job := range jobs {
-		// the last  always output
-		if i == len(jobs)-1 {
-			isLast = true
-		}
-		if !isRunning(job.Status) && !isLast {
+	allDone := true
+	for _, job := range jobs {
+		if !isRunning(job.Status) {
 			continue
 		}
+		allDone = false
 		wg.Add(1)
 		go func(j *gitlab.Job) {
 			_ = doTrace(client, pid, j, tailLine)
@@ -174,7 +171,10 @@ func traceRunningJobs(client *gitlab.Client, pid interface{}, jobs []*gitlab.Job
 		}(job)
 	}
 	wg.Wait()
-	println("\u001b[38;1mall jobs done")
+	if allDone {
+		println("all jobs done")
+		traceAllJobs(client, pid, jobs, tailLine)
+	}
 }
 
 func traceAllJobs(client *gitlab.Client, pid interface{}, jobs []*gitlab.Job, tailLine int64) {
@@ -204,7 +204,7 @@ func traceAllJobs(client *gitlab.Client, pid interface{}, jobs []*gitlab.Job, ta
 }
 
 func isRunning(status string) bool {
-	if status == "success" || status == "failed" || status == "cancelled" {
+	if status == "success" || status == "failed" || status == "cancelled" || status == "skipped" {
 		return false
 	}
 	return true
@@ -218,19 +218,18 @@ func doTrace(client *gitlab.Client, pid interface{}, job *gitlab.Job, tailLine i
 		trace, _, err := client.Jobs.GetTraceFile(pid, job.ID)
 		utils.Check(err)
 		prefixReader := prefixer.New(trace, prefix)
+		buffer, err := ioutil.ReadAll(prefixReader)
+		utils.Check(err)
 		var output io.Writer
 		if firstTail {
-			buf, err := ioutil.ReadAll(prefixReader)
-			file, _ := ioutil.TempFile("", "trace-log")
-			file.Write(buf)
-			utils.Check(err)
 			var lines []string
-			lines = append(lines, strings.Split(string(buf), "\n")...)
+			lines = append(lines, strings.Split(string(buffer), "\n")...)
 			begin := int64(len(lines)) - tailLine
-			if begin > 0 {
-				for _, line := range lines[begin:] {
-					println(line)
-				}
+			if begin < 0 {
+				begin = 0
+			}
+			for _, line := range lines[begin:] {
+				println(line)
 			}
 			firstTail = false
 			output = ioutil.Discard
@@ -239,12 +238,12 @@ func doTrace(client *gitlab.Client, pid interface{}, job *gitlab.Job, tailLine i
 			utils.Check(err)
 			output = os.Stdout
 		}
-		lenT, err := io.Copy(output, prefixReader)
+		lenT, err := output.Write(buffer)
 		if err != nil && err != io.EOF {
 			log.Println(err)
 			return err
 		}
-		atomic.AddInt64(&offset, lenT)
+		atomic.AddInt64(&offset, int64(lenT))
 		if !isRunning(job.Status) {
 			return nil
 		}
