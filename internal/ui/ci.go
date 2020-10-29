@@ -12,6 +12,8 @@ import (
 
 type event int
 
+const maxLength = 20
+
 const (
 	choice event = iota
 	help
@@ -149,8 +151,8 @@ func viewDefault(m JobModel) (s string) {
 		}
 
 		length := len(job.Name)
-		if len(job.Name) > 20 {
-			length = 20
+		if len(job.Name) > maxLength {
+			length = maxLength
 		}
 		o := fmt.Sprintf("%s %-25s\t%-10s\t%-10s\n", cursor, job.Name[:length], job.Status, job.Stage)
 		if checked {
