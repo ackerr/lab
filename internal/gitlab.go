@@ -41,7 +41,7 @@ type gitlabConfig struct {
 }
 
 type mainConfig struct {
-	ThemeColor string `toml:"theme_color"`
+	ThemeColor string `toml:"theme_color:omitempty"`
 }
 
 func Setup() {
@@ -59,6 +59,9 @@ func Setup() {
 	MainConfig = &mainConfig{}
 	viper.SetDefault("main.theme_color", "79")
 	err = viper.Sub("main").Unmarshal(MainConfig, decodeOpt)
+	if len(MainConfig.ThemeColor) == 0 {
+		MainConfig.ThemeColor = "79"
+	}
 	utils.Check(err)
 
 	if len(Config.Token) == 0 {

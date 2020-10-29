@@ -148,7 +148,11 @@ func viewDefault(m JobModel) (s string) {
 			checked = true
 		}
 
-		o := fmt.Sprintf("%s %-20s\t%-10s\t%-10s\n", cursor, job.Name, job.Status, job.Stage)
+		length := len(job.Name)
+		if len(job.Name) > 20 {
+			length = 20
+		}
+		o := fmt.Sprintf("%s %-25s\t%-10s\t%-10s\n", cursor, job.Name[:length], job.Status, job.Stage)
 		if checked {
 			o = utils.ColorFg(o, internal.MainConfig.ThemeColor)
 		}
