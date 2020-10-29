@@ -25,9 +25,12 @@ import (
 var (
 	// Config global gitlab config
 	Config     *gitlabConfig
+	MainConfig *mainConfig
 	prePage    = 100
 	apiVersion = "v4"
 )
+
+const interval = 3 * time.Second
 
 type gitlabConfig struct {
 	BaseURL   string `toml:"base_url"`
@@ -35,6 +38,10 @@ type gitlabConfig struct {
 	Codespace string `toml:"codespace"`
 	Name      string `toml:"name"`
 	Email     string `toml:"email"`
+}
+
+type mainConfig struct {
+	ThemeColor string `toml:"theme_color"`
 }
 
 func Setup() {
@@ -47,6 +54,11 @@ func Setup() {
 	Config = &gitlabConfig{}
 	decodeOpt := func(config *mapstructure.DecoderConfig) { config.TagName = "toml" }
 	err = viper.Sub("gitlab").Unmarshal(Config, decodeOpt)
+	utils.Check(err)
+
+	MainConfig = &mainConfig{}
+	viper.SetDefault("main.theme_color", "79")
+	err = viper.Sub("main").Unmarshal(MainConfig, decodeOpt)
 	utils.Check(err)
 
 	if len(Config.Token) == 0 {
@@ -147,16 +159,7 @@ func TransferGitURLToProject(gitURL string) string {
 	return url
 }
 
-// TODO define a job struct
-func TraceJobs(client *gitlab.Client, pid interface{}, jobs []*gitlab.Job, isAll bool, tailLine int64) {
-	if isAll {
-		traceAllJobs(client, pid, jobs, tailLine)
-		return
-	}
-	traceRunningJobs(client, pid, jobs, tailLine)
-}
-
-func traceRunningJobs(client *gitlab.Client, pid interface{}, jobs []*gitlab.Job, tailLine int64) {
+func TraceRunningJobs(client *gitlab.Client, pid interface{}, jobs []*gitlab.Job, tailLine int64) bool {
 	wg := sync.WaitGroup{}
 	allDone := true
 	for _, job := range jobs {
@@ -166,55 +169,26 @@ func traceRunningJobs(client *gitlab.Client, pid interface{}, jobs []*gitlab.Job
 		allDone = false
 		wg.Add(1)
 		go func(j *gitlab.Job) {
-			_ = doTrace(client, pid, j, tailLine)
+			_ = DoTrace(client, pid, j, tailLine)
 			wg.Done()
 		}(job)
 	}
 	wg.Wait()
-	if allDone {
-		println("All jobs done!")
-		traceAllJobs(client, pid, jobs, tailLine)
-	}
-}
-
-func traceAllJobs(client *gitlab.Client, pid interface{}, jobs []*gitlab.Job, tailLine int64) {
-	m := make(map[string]*gitlab.Job)
-	j := make([]string, 0)
-	for _, job := range jobs {
-		d := fmt.Sprintf("%-20s\t%-10s\t%-10s", job.Name, job.Status, job.Stage)
-		m[d] = job
-		j = append(j, d)
-	}
-	names := FuzzyMultiFinder(j)
-	if len(names[0]) == 0 {
-		return
-	}
-	// remove the last empty item
-	names = names[:len(names)-1]
-
-	wg := sync.WaitGroup{}
-	wg.Add(len(names))
-	for _, name := range names {
-		go func(n string) {
-			_ = doTrace(client, pid, m[n], tailLine)
-			wg.Done()
-		}(name)
-	}
-	wg.Wait()
+	return allDone
 }
 
 func isRunning(status string) bool {
-	if status == "success" || status == "failed" || status == "cancelled" || status == "skipped" {
+	if status == "success" || status == "failed" || status == "canceled" || status == "skipped" {
 		return false
 	}
 	return true
 }
 
-func doTrace(client *gitlab.Client, pid interface{}, job *gitlab.Job, tailLine int64) error {
+func DoTrace(client *gitlab.Client, pid interface{}, job *gitlab.Job, tailLine int64) error {
 	var offset int64
 	firstTail := true
 	prefix := utils.RandomColor(fmt.Sprintf("[%s] \u001b[0m", job.Name))
-	for range time.NewTicker(time.Second * 3).C {
+	for range time.NewTicker(interval).C {
 		trace, _, err := client.Jobs.GetTraceFile(pid, job.ID)
 		utils.Check(err)
 		prefixReader := prefixer.New(trace, prefix)
@@ -247,7 +221,7 @@ func doTrace(client *gitlab.Client, pid interface{}, job *gitlab.Job, tailLine i
 			log.Println(err)
 			return err
 		}
-		atomic.AddInt64(&offset, int64(lenT))
+		atomic.AddInt64(&offset, lenT)
 		if !isRunning(job.Status) {
 			return nil
 		}

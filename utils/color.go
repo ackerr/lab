@@ -1,7 +1,16 @@
 package utils
 
-import "math/rand"
+import (
+	"math/rand"
 
+	"github.com/muesli/termenv"
+)
+
+var (
+	term = termenv.ColorProfile()
+)
+
+// Color base 8color
 // Black:   \u001b[30m
 // Red:     \u001b[31m
 // Green:   \u001b[32m
@@ -25,4 +34,8 @@ func RandomColor(in string) (out string) {
 	index := rand.Intn(len(Color))
 	out = Color[index] + in
 	return
+}
+
+func ColorFg(val, color string) string {
+	return termenv.String(val).Foreground(term.Color(color)).String()
 }

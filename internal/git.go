@@ -52,7 +52,7 @@ func SetGitConfig(key, value, path string) error {
 // CurrentGitRepo return the GitRepo path
 func CurrentGitRepo() (string, error) {
 	output, err := GitCommand("rev-parse", "-q", "--show-toplevel")
-	return string(output), err
+	return output, err
 }
 
 // CurrentGitRepo return the current branch
