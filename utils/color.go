@@ -2,6 +2,7 @@ package utils
 
 import "math/rand"
 
+// Color base 8color
 // Black:   \u001b[30m
 // Red:     \u001b[31m
 // Green:   \u001b[32m

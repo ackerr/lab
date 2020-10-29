@@ -16,7 +16,7 @@ func init() {
 	ciCmd.Flags().StringP("remote", "r", "", "the remote's pipeline")
 	ciCmd.Flags().StringP("branch", "b", "", "the branch's pipeline")
 	ciCmd.Flags().BoolP("all", "l", false, "view all jobs, use <tab> to view multiple jobs")
-	ciCmd.Flags().Int64VarP(&tailLine, "lines", "n", 20, "display the last part of a job log, default 20")
+	ciCmd.Flags().Int64VarP(&tailLine, "lines", "n", 20, "display the last part of a job log")
 	rootCmd.AddCommand(ciCmd)
 }
 

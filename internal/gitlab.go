@@ -204,7 +204,7 @@ func traceAllJobs(client *gitlab.Client, pid interface{}, jobs []*gitlab.Job, ta
 }
 
 func isRunning(status string) bool {
-	if status == "success" || status == "failed" || status == "cancelled" || status == "skipped" {
+	if status == "success" || status == "failed" || status == "canceled" || status == "skipped" {
 		return false
 	}
 	return true

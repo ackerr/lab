@@ -15,7 +15,7 @@ func init() {
 
 var configCmd = &cobra.Command{
 	Use:   "config",
-	Short: "use $EDITOR open config file",
+	Short: "Use $EDITOR open config file",
 	Run:   editConfig,
 }
 
