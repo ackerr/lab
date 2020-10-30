@@ -41,7 +41,7 @@ func FuzzyLine(filePath string) string {
 
 // FuzzyFinder : fuzzy finder a content, if enter ctrl-c will return ""
 func FuzzyFinder(lines []string) (filtered string) {
-	if checkCommandExists("fzf") {
+	if checkFZF() {
 		filters := withFilter("fzf", func(in io.WriteCloser) {
 			for _, line := range lines {
 				fmt.Fprintln(in, line)
@@ -58,8 +58,31 @@ func FuzzyFinder(lines []string) (filtered string) {
 	return
 }
 
-func checkCommandExists(command string) bool {
-	_, err := exec.LookPath(command)
+// FuzzyMultiFinder : fuzzy finder multiple content
+func FuzzyMultiFinder(lines []string) (filtered []string) {
+	if checkFZF() {
+		filtered = withFilter("fzf -m", func(in io.WriteCloser) {
+			for _, line := range lines {
+				fmt.Fprintln(in, line)
+			}
+		})
+	} else {
+		index, err := fuzzyfinder.FindMulti(lines, func(i int) string {
+			return lines[i]
+		})
+		utils.Check(err)
+		for _, i := range index {
+			filtered = append(filtered, lines[i])
+		}
+	}
+	return
+}
+
+func checkFZF() bool {
+	if !MainConfig.FZF {
+		return false
+	}
+	_, err := exec.LookPath("fzf")
 	return err == nil
 }
 
@@ -82,23 +105,4 @@ func withFilter(command string, input func(in io.WriteCloser)) []string {
 	}()
 	result, _ := cmd.Output()
 	return strings.Split(string(result), "\n")
-}
-
-func FuzzyMultiFinder(lines []string) (filtered []string) {
-	if checkCommandExists("fzf") {
-		filtered = withFilter("fzf -m", func(in io.WriteCloser) {
-			for _, line := range lines {
-				fmt.Fprintln(in, line)
-			}
-		})
-	} else {
-		index, err := fuzzyfinder.FindMulti(lines, func(i int) string {
-			return lines[i]
-		})
-		utils.Check(err)
-		for _, i := range index {
-			filtered = append(filtered, lines[i])
-		}
-	}
-	return
 }

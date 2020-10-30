@@ -7,90 +7,23 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
-	"path/filepath"
 	"strings"
 	"sync"
 	"sync/atomic"
 	"time"
 
-	"github.com/a8m/envsubst"
 	"github.com/ackerr/lab/utils"
 	"github.com/goware/prefixer"
-	"github.com/mitchellh/mapstructure"
 	"github.com/schollz/progressbar/v3"
-	"github.com/spf13/viper"
 	"github.com/xanzy/go-gitlab"
 )
 
 var (
-	// Config global gitlab config
-	Config     *gitlabConfig
-	MainConfig *mainConfig
 	prePage    = 100
 	apiVersion = "v4"
 )
 
 const interval = 3 * time.Second
-
-type gitlabConfig struct {
-	BaseURL   string `toml:"base_url"`
-	Token     string `toml:"token"`
-	Codespace string `toml:"codespace"`
-	Name      string `toml:"name"`
-	Email     string `toml:"email"`
-}
-
-type mainConfig struct {
-	ThemeColor string `toml:"theme_color:omitempty"`
-}
-
-func Setup() {
-	buf, err := envsubst.ReadFile(ConfigPath)
-	utils.Check(err)
-	viper.AddConfigPath(LabDir)
-	err = viper.ReadConfig(bytes.NewReader(buf))
-	utils.Check(err)
-
-	Config = &gitlabConfig{}
-	decodeOpt := func(config *mapstructure.DecoderConfig) { config.TagName = "toml" }
-	err = viper.Sub("gitlab").Unmarshal(Config, decodeOpt)
-	utils.Check(err)
-
-	MainConfig = &mainConfig{}
-	viper.SetDefault("main.theme_color", "79")
-	err = viper.Sub("main").Unmarshal(MainConfig, decodeOpt)
-	if len(MainConfig.ThemeColor) == 0 {
-		MainConfig.ThemeColor = "79"
-	}
-	utils.Check(err)
-
-	if len(Config.Token) == 0 {
-		utils.Err("set Gitlab token first, use `lab config`")
-	}
-
-	baseURL := Config.BaseURL
-	if len(baseURL) == 0 {
-		utils.Err("set Gitlab base url first, use `lab config`")
-	}
-	if !strings.HasPrefix(baseURL, "http") {
-		baseURL = "https://" + baseURL
-	}
-	if strings.HasSuffix(baseURL, "/") {
-		baseURL = baseURL[:len(baseURL)-1]
-	}
-	Config.BaseURL = baseURL
-
-	home, err := os.UserHomeDir()
-	utils.Check(err)
-	codespace := Config.Codespace
-	if strings.HasPrefix(codespace, "~") {
-		codespace = filepath.Join(home, codespace[1:])
-	}
-	if strings.HasSuffix(codespace, "/") {
-		codespace = codespace[:len(codespace)-1]
-	}
-	Config.Codespace = codespace
-}
 
 func NewClient() *gitlab.Client {
 	Setup()
