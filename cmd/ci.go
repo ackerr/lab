@@ -13,8 +13,6 @@ import (
 	"github.com/xanzy/go-gitlab"
 )
 
-var tailLine int64
-
 func init() {
 	ciCmd.Flags().StringP("remote", "r", "", "the remote's pipeline")
 	ciCmd.Flags().StringP("branch", "b", "", "the branch's pipeline")
@@ -50,7 +48,7 @@ func currentJobs(cmd *cobra.Command, args []string) {
 	}
 	gitURL := internal.RemoteURL(remote)
 	if !strings.Contains(gitURL, internal.Config.BaseURL[8:]) {
-		utils.Err("not a gitlab repo")
+		utils.Err("not", internal.Config.BaseURL, "repo")
 	}
 	project := internal.TransferGitURLToProject(gitURL)
 
@@ -69,16 +67,16 @@ func currentJobs(cmd *cobra.Command, args []string) {
 
 	isAll, _ := cmd.Flags().GetBool("all")
 	if isAll {
-		jobUI(client, p.ID, jobs)
+		jobUI(client, p.ID, jobs, tailLine)
 		return
 	}
 	allDone := internal.TraceRunningJobs(client, p.ID, jobs, tailLine)
 	if allDone {
-		jobUI(client, p.ID, jobs)
+		jobUI(client, p.ID, jobs, tailLine)
 	}
 }
 
-func jobUI(client *gitlab.Client, pid interface{}, jobs []*gitlab.Job) {
+func jobUI(client *gitlab.Client, pid interface{}, jobs []*gitlab.Job, tailLine int64) {
 	model := ui.NewJobUI(client, pid, jobs, tailLine)
 	program := tea.NewProgram(model)
 	err := program.Start()

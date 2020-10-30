@@ -22,6 +22,9 @@ func Clone(gitURL, path string) error {
 	cmd.Stderr = os.Stderr
 	cmd.Stdout = os.Stdout
 	err := cmd.Run()
+	if err != nil {
+		return err
+	}
 	if len(Config.Email) > 0 {
 		_ = SetGitConfig("email", Config.Email, path)
 	}

@@ -138,7 +138,7 @@ func (m *JobModel) resetEvent() {
 }
 
 func viewDefault(m JobModel) (s string) {
-	s = utils.ColorFg("All job done!\n\n", internal.MainConfig.ThemeColor)
+	s = utils.ColorFg("All job done! (type ? for help)\n\n", internal.MainConfig.ThemeColor)
 	for i, job := range m.choices {
 		cursor := "  "
 		if m.cursor == i {
@@ -184,7 +184,7 @@ func viewHelp() string {
    r : refresh job status
    R : retry current job
    V : view the chosen job trace
-   <tab> : select current job
+   <tab> or <enter> : select current job
 	`
 
 	s := utils.ColorFg("Lab ci quickhelp ~\n", internal.MainConfig.ThemeColor)
