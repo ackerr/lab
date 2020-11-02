@@ -1,4 +1,4 @@
-VERSION=0.2.7
+VERSION=0.2.8
 
 BIN=lab
 DIST_DIR=dist
