@@ -2,7 +2,9 @@ package ui
 
 import (
 	"fmt"
+	"log"
 	"sync"
+	"time"
 
 	"github.com/ackerr/lab/internal"
 	"github.com/ackerr/lab/utils"
@@ -12,7 +14,10 @@ import (
 
 type event int
 
-const maxLength = 20
+const (
+	maxLength       = 20
+	intervalRefresh = 2 * time.Second
+)
 
 const (
 	choice event = iota
@@ -43,8 +48,15 @@ type JobModel struct {
 	event    event
 }
 
+type tickMsg time.Time
+
+func tick() tea.Msg {
+	time.Sleep(intervalRefresh)
+	return tickMsg{}
+}
+
 func (m JobModel) Init() tea.Cmd {
-	return nil
+	return tick
 }
 
 func (m JobModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
@@ -53,6 +65,9 @@ func (m JobModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return eventCallback(msg, m)
 	}
 	switch msg := msg.(type) {
+	case tickMsg:
+		m.refreshJobStatus()
+		return m, tick
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "?":
@@ -78,19 +93,16 @@ func (m JobModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.cursor++
 			}
 		case "r":
-			for i, job := range m.choices {
-				m.wg.Add(1)
-				go func(index, jobID int) {
-					job, _, err := m.client.Jobs.GetJob(m.pid, jobID)
-					utils.Check(err)
-					m.choices[index] = job
-					m.wg.Done()
-				}(i, job.ID)
-			}
+			m.refreshJobStatus()
 			return m, nil
 		case "R":
+			var err error
 			job := m.choices[m.cursor]
-			job, _, err := m.client.Jobs.RetryJob(m.pid, job.ID)
+			if job.Status == "manual" {
+				job, _, err = m.client.Jobs.PlayJob(m.pid, job.ID)
+			} else {
+				job, _, err = m.client.Jobs.RetryJob(m.pid, job.ID)
+			}
 			if err != nil {
 				return m, tea.Quit
 			}
@@ -109,18 +121,6 @@ func (m JobModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, nil
 }
 
-func eventCallback(msg tea.Msg, m JobModel) (tea.Model, tea.Cmd) {
-	switch msg := msg.(type) {
-	case tea.KeyMsg:
-		switch msg.String() {
-		case "q", "ctrl+c":
-			return m, tea.Quit
-		}
-	}
-	m.resetEvent()
-	return m, nil
-}
-
 func (m JobModel) View() (s string) {
 	switch m.event {
 	case trace:
@@ -133,8 +133,34 @@ func (m JobModel) View() (s string) {
 	return
 }
 
+func (m *JobModel) refreshJobStatus() {
+	for i, job := range m.choices {
+		if job.Status == "running" || job.Status == "pending" || job.Status == "created" {
+			go func(index, jobID int) {
+				job, _, err := m.client.Jobs.GetJob(m.pid, jobID)
+				if err != nil {
+					log.Println(err)
+				}
+				m.choices[index] = job
+			}(i, job.ID)
+		}
+	}
+}
+
 func (m *JobModel) resetEvent() {
 	m.event = 0
+}
+
+func eventCallback(msg tea.Msg, m JobModel) (tea.Model, tea.Cmd) {
+	switch msg := msg.(type) {
+	case tea.KeyMsg:
+		switch msg.String() {
+		case "q", "ctrl+c":
+			return m, tea.Quit
+		}
+	}
+	m.resetEvent()
+	return m, nil
 }
 
 func viewDefault(m JobModel) (s string) {
@@ -182,7 +208,7 @@ func viewHelp() string {
    k : move down
    o : open job page in browser
    r : refresh job status
-   R : retry current job
+   R : retry current job or run the manual job
    V : view the chosen job trace
    <tab> or <enter> : select current job
 	`

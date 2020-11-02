@@ -64,6 +64,7 @@ func currentJobs(cmd *cobra.Command, args []string) {
 	utils.Check(err)
 	jobs, _, err := client.Jobs.ListPipelineJobs(p.ID, pipelines[0].ID, &gitlab.ListJobsOptions{})
 	utils.Check(err)
+	jobs = sortJob(jobs)
 
 	isAll, _ := cmd.Flags().GetBool("all")
 	if isAll {
@@ -81,4 +82,12 @@ func jobUI(client *gitlab.Client, pid interface{}, jobs []*gitlab.Job, tailLine 
 	program := tea.NewProgram(model)
 	err := program.Start()
 	utils.Check(err)
+}
+
+// list jobs api only sorted in descending order of their IDs.
+func sortJob(jobs []*gitlab.Job) []*gitlab.Job {
+	for i, j := 0, len(jobs)-1; i < j; i, j = i+1, j-1 {
+		jobs[i], jobs[j] = jobs[j], jobs[i]
+	}
+	return jobs
 }
