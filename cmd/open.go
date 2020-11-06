@@ -11,6 +11,7 @@ import (
 var subpage string
 
 func init() {
+	openCmd.Flags().StringP("remote", "r", "", "the remote's pipeline")
 	openCmd.Flags().BoolP("pipelines", "p", false, "open pipeline page")
 	openCmd.Flags().BoolP("merge_requests", "m", false, "open merge_requests page")
 	openCmd.Flags().StringVar(&subpage, "subpage", "", "open the input subpage")
@@ -18,18 +19,17 @@ func init() {
 }
 
 var openCmd = &cobra.Command{
-	Use:   "open [remote]",
-	Short: "Open the current repo in web browser, like <lab open> or <lab open origin>",
+	Use:   "open",
+	Short: "Open the current repo in web browser",
 	Run:   openCurrentRepo,
 }
 
 func openCurrentRepo(cmd *cobra.Command, args []string) {
 	internal.Setup()
-	var remote string
-	if len(args) > 0 {
-		remote = args[0]
+	if _, err := internal.CurrentGitRepo(); err != nil {
+		return
 	}
-	_, _ = internal.CurrentGitRepo()
+	remote, _ := cmd.Flags().GetString("remote")
 	if remote == "" {
 		branch := internal.CurrentBranch()
 		remote = internal.CurrentRemote(branch)
