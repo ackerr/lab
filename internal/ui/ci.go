@@ -164,7 +164,7 @@ func eventCallback(msg tea.Msg, m JobModel) (tea.Model, tea.Cmd) {
 }
 
 func viewDefault(m JobModel) (s string) {
-	s = utils.ColorFg("All job done! (type ? for help)\n\n", internal.MainConfig.ThemeColor)
+	s = utils.ColorFg("Pipeline Jobs! (type ? for help)\n\n", internal.MainConfig.ThemeColor)
 	for i, job := range m.choices {
 		cursor := "  "
 		if m.cursor == i {

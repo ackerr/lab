@@ -18,7 +18,14 @@ func GitCommand(args ...string) (string, error) {
 
 // Clone git clone the gitlab project
 func Clone(gitURL, path string) error {
-	cmd := exec.Command("git", "clone", gitURL, path)
+	args := []string{"clone", gitURL, path}
+	extra := strings.Split(MainConfig.CloneOpts, " ")
+	for _, a := range extra {
+		if a != "" {
+			args = append(args, a)
+		}
+	}
+	cmd := exec.Command("git", args...)
 	cmd.Stderr = os.Stderr
 	cmd.Stdout = os.Stdout
 	err := cmd.Run()

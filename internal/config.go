@@ -69,6 +69,7 @@ type mainConfig struct {
 	ThemeColor     string `toml:"theme_color"`
 	TailLineNumber int64  `toml:"tail_line_number"`
 	FZF            bool   `toml:"fzf"`
+	CloneOpts      string `toml:"clone_opts"`
 }
 
 func Setup() {
