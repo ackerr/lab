@@ -30,6 +30,8 @@ func Clone(gitURL, path string) error {
 	cmd.Stdout = os.Stdout
 	err := cmd.Run()
 	if err != nil {
+		// if clone failed, remove the empty directory
+		_ = os.Remove(path)
 		return err
 	}
 	if len(Config.Email) > 0 {

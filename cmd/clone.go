@@ -2,8 +2,10 @@ package cmd
 
 import (
 	"os"
+	"os/signal"
 	"path/filepath"
 	"strings"
+	"syscall"
 
 	"github.com/ackerr/lab/internal"
 	"github.com/ackerr/lab/utils"
@@ -62,5 +64,13 @@ func cloneRepo(cmd *cobra.Command, args []string) {
 		err := os.MkdirAll(path, 0755)
 		utils.Check(err)
 	}
+
+	// if clone abort, remove the empty directory
+	sign := make(chan os.Signal, 1)
+	signal.Notify(sign, syscall.SIGINT, syscall.SIGTERM)
+	go func() {
+		<-sign
+		_ = os.Remove(path)
+	}()
 	_ = internal.Clone(gitURL, path)
 }

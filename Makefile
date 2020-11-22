@@ -24,7 +24,7 @@ fmt:
 lint:
 	@go vet ./...
 	@go mod tidy
-	@golangci-lint run
+	@golangci-lint run --fix
 
 install:
 	@go mod download
