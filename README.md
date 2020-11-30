@@ -9,14 +9,15 @@
 ## 功能
 
 ```
-lab config   快捷打开lab的配置文件
 lab sync     同步gitlab项目至本地
 lab browser  模糊搜索项目名, 回车后，默认浏览器中打开项目地址
 lab open     快捷在默认浏览器中打开当前所在项目的web地址
 lab clone    模糊搜索项目名, 如果设置了codespace, 会将项目clone至codespace，
              否则在当前目录，当然也可以通过--current(-c)，clone至当前路径
 lab ws       模糊搜索codespace中的项目，可配合cd，rm使用
+lab lint     校验.gitlab-ci.yml文件格式
 lab ci       获取当前项目指定远端分支的ci日志
+lab config   快捷打开lab的配置文件
 ```
 
 > 通过 `lab help` 查看lab更多命令及其参数

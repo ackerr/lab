@@ -39,3 +39,7 @@ func RandomColor(in string) (out string) {
 func ColorFg(val, color string) string {
 	return termenv.String(val).Foreground(term.Color(color)).String()
 }
+
+func ColorBg(val, color string) string {
+	return termenv.String(val).Background(term.Color(color)).String()
+}
