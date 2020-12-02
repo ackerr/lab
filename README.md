@@ -57,15 +57,14 @@ name      = ""
 email     = ""
 
 [main]
-fzf       = 0    # 是否使用系统fzf
-theme_color      = "79" # 主题色，支持hex值或0-256
-tail_line_number = "30" # 默认tail number
-clone_opts       = ""   # git clone 额外参数
+fzf        = 0    # 是否使用系统fzf
+clone_opts = ""   # git clone 额外参数
 ```
 
 > 根据功能分为 gitlab 与 main 两个部分，添加时需要注意。其中base_url 与 token 为必填项，其余配置均为选填。token获取方式可参考[链接](https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html#creating-a-personal-access-token)。
 
 ### lab clone
+
 - 设置name和email，会默认为项目设置git user.name以及user.email
 - 设置codespace，会将项目clone至codespace路径中，并使用结构化目录展示, 例如clone ackerr/ackerr 则会克隆至`$CODESPACE/$GITLAB_BASE_URL/ackerr/ackerr`
 - 通过clone_opts，可额外添加自定义git参数，例如clone_opts="--origin ackerr --branch fix"

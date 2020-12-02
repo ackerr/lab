@@ -74,9 +74,7 @@ func projects(client *gitlab.Client, page int, syncAll bool) ([]*gitlab.Project,
 	listOpt := gitlab.ListOptions{PerPage: prePage, Page: page}
 	projectsOpt := gitlab.ListProjectsOptions{Simple: gitlab.Bool(true), Membership: gitlab.Bool(!syncAll), ListOptions: listOpt}
 	projects, res, err := client.Projects.ListProjects(&projectsOpt)
-	if err != nil {
-		return []*gitlab.Project{}, 0
-	}
+	utils.Check(err)
 	return projects, res.TotalPages
 }
 
