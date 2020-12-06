@@ -18,7 +18,7 @@ func init() {
 
 var lintCmd = &cobra.Command{
 	Use:   "lint",
-	Short: "check .gitlab-ci.yml syntax",
+	Short: "Check .gitlab-ci.yml syntax",
 	Run:   lint,
 }
 

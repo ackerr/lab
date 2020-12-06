@@ -6,25 +6,24 @@
 
 [![ackerr/lab](https://res.cloudinary.com/marcomontalbano/image/upload/v1606925692/video_to_markdown/images/youtube--qqKW9SQqjF0-c05b58ac6eb4c4700831b2b3070cd403.jpg)](https://www.youtube.com/watch?v=qqKW9SQqjF0 "ackerr/lab")
 
-关于GitLab的命令行工具
+A command-line tool for gitlab. [中文](./README-CN.md)
 
-## 功能
+## Feature
 
 ```
-lab sync     同步gitlab项目至本地
-lab browser  模糊搜索项目名, 回车后，默认浏览器中打开项目地址
-lab open     快捷在默认浏览器中打开当前所在项目的web地址
-lab clone    模糊搜索项目名, 如果设置了codespace, 会将项目clone至codespace，
-             否则在当前目录，当然也可以通过--current(-c)，clone至当前路径
-lab ws       模糊搜索codespace中的项目，可配合cd，rm使用
-lab lint     校验.gitlab-ci.yml文件格式
-lab ci       获取当前项目指定远端分支的ci日志
-lab config   快捷打开lab的配置文件
+lab sync        Sync gitlab projects
+lab browser     Fuzzy find the gitlab project and open it in $BROWSER
+lab clone       Fuzzy find the gitlab and clone it
+lab ws          Fuzzy find repo in your codespace
+lab lint        Check .gitlab-ci.yml syntax
+lab open        Open the current repo remote in $BROWSER
+lab ci          View the pipeline jobs trace log, default view running job
+lab config      Use $EDITOR open config file
 ```
 
-> 通过 `lab help` 查看lab更多命令及其参数
+For more information, please use `lab help`.
 
-## 安装
+## Install
 
 ### homebrew
 
@@ -45,37 +44,41 @@ $ scoop install ackerr/lab
 $ go get -u "github.com/ackerr/lab"
 ```
 
-## 配置
+## Configure
 
-在首次使用`lab config`时，会默认生成配置文件，所有配置如下
+Recommended use `lab config` to edit config file (`~/.config/lab/config.toml`), this command will open the config file use $EDITOR. If config file don't exist, it will use config template auto generate. 
+
+All configuration is as follows: 
+
+> Two variables are required, `base_url` and `token`. The way to get gitlab token, see [this](https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html#creating-a-personal-access-token)
 
 ```
 [gitlab]
-base_url  = $GITLAB_BASE_URL
-token     = $GITLAB_TOKEN
+# gitlab domain, like https://gitlab.com
+base_url = $GITLAB_BASE_URL
 
+# gitlab access token
+token = $GITLAB_TOKEN
+
+# If set, lab clone and lab ws will use this path as target path
+# default empty
 codespace = ""
-name      = ""
-email     = ""
+
+# If set, lab clone will auto set user.name in repo gitconfig
+# default empty
+name = ""
+
+# If set, lab clone will auto set user.email in repo gitconfig
+# default empty
+email = ""
 
 [main]
-fzf        = 0    # 是否使用系统fzf
-clone_opts = ""   # git clone 额外参数
-```
+# If set 1, it will use fzf as fuzzy finder, default use go-fuzzyfinder
+# default 0
+fzf = 0
 
-> 根据功能分为 gitlab 与 main 两个部分，添加时需要注意。其中base_url 与 token 为必填项，其余配置均为选填。token获取方式可参考[链接](https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html#creating-a-personal-access-token)。
-
-### lab clone
-
-- 设置name和email，会默认为项目设置git user.name以及user.email
-- 设置codespace，会将项目clone至codespace路径中，并使用结构化目录展示, 例如clone ackerr/ackerr 则会克隆至`$CODESPACE/$GITLAB_BASE_URL/ackerr/ackerr`
-- 通过clone_opts，可额外添加自定义git参数，例如clone_opts="--origin ackerr --branch fix"
-
-### lab ws
-
-配合alias使用
-
-```
-alias ws='cd `lab ws`'
-alias rro='rm -r `lab ws`'
+# lab clone extra custom git clone config
+# example `clone_opts="--origin ackerr --branch fix"`
+# default empty
+clone_opts = ""
 ```
