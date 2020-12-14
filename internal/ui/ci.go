@@ -135,7 +135,7 @@ func (m JobModel) View() (s string) {
 
 func (m *JobModel) refreshJobStatus() {
 	for i, job := range m.choices {
-		if job.Status == "running" || job.Status == "pending" || job.Status == "created" {
+		if internal.IsRunning(job.Status) {
 			go func(index, jobID int) {
 				job, _, err := m.client.Jobs.GetJob(m.pid, jobID)
 				if err != nil {

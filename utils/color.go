@@ -2,7 +2,9 @@ package utils
 
 import (
 	"math/rand"
+	"time"
 
+	"github.com/fatih/color"
 	"github.com/muesli/termenv"
 )
 
@@ -10,30 +12,20 @@ var (
 	term = termenv.ColorProfile()
 )
 
-// Color base 8color
-// Black:   \u001b[30m
-// Red:     \u001b[31m
-// Green:   \u001b[32m
-// Yellow:  \u001b[33m
-// Blue:    \u001b[34m
-// Magenta: \u001b[35m
-// Cyan:    \u001b[36m
-// White:   \u001b[37m
-// Reset:   \u001b[0m
-var Color = []string{
-	"\u001b[31;1m",
-	"\u001b[32;1m",
-	"\u001b[33;1m",
-	"\u001b[34;1m",
-	"\u001b[35;1m",
-	"\u001b[36;1m",
-	"\u001b[37;1m",
+var Color = []color.Attribute{
+	color.FgRed,
+	color.FgGreen,
+	color.FgYellow,
+	color.FgBlue,
+	color.FgMagenta,
+	color.FgCyan,
+	color.FgWhite,
 }
 
-func RandomColor(in string) (out string) {
+func RandomColor(in string) string {
+	rand.Seed(time.Now().UnixNano())
 	index := rand.Intn(len(Color))
-	out = Color[index] + in
-	return
+	return color.New(Color[index]).Sprintf(in)
 }
 
 func ColorFg(val, color string) string {

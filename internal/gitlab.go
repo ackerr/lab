@@ -97,7 +97,7 @@ func TraceRunningJobs(client *gitlab.Client, pid interface{}, jobs []*gitlab.Job
 	wg := sync.WaitGroup{}
 	allDone := true
 	for _, job := range jobs {
-		if !isRunning(job.Status) {
+		if !IsRunning(job.Status) {
 			continue
 		}
 		allDone = false
@@ -111,17 +111,18 @@ func TraceRunningJobs(client *gitlab.Client, pid interface{}, jobs []*gitlab.Job
 	return allDone
 }
 
-func isRunning(status string) bool {
-	if status == "success" || status == "failed" || status == "canceled" || status == "skipped" {
-		return false
+// IsRunning check job status
+func IsRunning(status string) bool {
+	if status == "created" || status == "pending" || status == "running" {
+		return true
 	}
-	return true
+	return false
 }
 
 func DoTrace(client *gitlab.Client, pid interface{}, job *gitlab.Job, tailLine int64) error {
 	var offset int64
 	firstTail := true
-	prefix := utils.RandomColor(fmt.Sprintf("[%s] \u001b[0m", job.Name))
+	prefix := utils.RandomColor(fmt.Sprintf("[%s] ", job.Name))
 	for range time.NewTicker(interval).C {
 		trace, _, err := client.Jobs.GetTraceFile(pid, job.ID)
 		utils.Check(err)
@@ -156,7 +157,7 @@ func DoTrace(client *gitlab.Client, pid interface{}, job *gitlab.Job, tailLine i
 			return err
 		}
 		atomic.AddInt64(&offset, lenT)
-		if !isRunning(job.Status) {
+		if !IsRunning(job.Status) {
 			return nil
 		}
 		job, _, err = client.Jobs.GetJob(pid, job.ID)
