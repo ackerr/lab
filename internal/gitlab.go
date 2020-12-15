@@ -1,19 +1,15 @@
 package internal
 
 import (
-	"bytes"
 	"fmt"
-	"io"
 	"io/ioutil"
-	"log"
-	"os"
+	"regexp"
 	"strings"
 	"sync"
 	"sync/atomic"
 	"time"
 
 	"github.com/ackerr/lab/utils"
-	"github.com/goware/prefixer"
 	"github.com/schollz/progressbar/v3"
 	"github.com/xanzy/go-gitlab"
 )
@@ -119,6 +115,10 @@ func IsRunning(status string) bool {
 	return false
 }
 
+// gitlab trace log has some hidden content like this ^[[0m^[[0K^[[36;1mStart^[[0;m`
+// It will make prefix failure, so replace it. PS: \x1b == ^[
+var re = regexp.MustCompile(`\x1b\[0m.*\[0K`)
+
 func DoTrace(client *gitlab.Client, pid interface{}, job *gitlab.Job, tailLine int64) error {
 	var offset int64
 	firstTail := true
@@ -126,37 +126,22 @@ func DoTrace(client *gitlab.Client, pid interface{}, job *gitlab.Job, tailLine i
 	for range time.NewTicker(interval).C {
 		trace, _, err := client.Jobs.GetTraceFile(pid, job.ID)
 		utils.Check(err)
-		prefixReader := prefixer.New(trace, prefix)
-		var output io.Writer
+		buffer, err := ioutil.ReadAll(trace)
+		utils.Check(err)
+		lines := strings.Split(string(buffer), "\n")
+		length := len(lines)
 		if firstTail {
-			buffer, err := ioutil.ReadAll(prefixReader)
-			utils.Check(err)
-			prefixReader = prefixer.New(bytes.NewReader(buffer), "")
-			var lines []string
-			lines = append(lines, strings.Split(string(buffer), "\n")...)
-			begin := int64(len(lines)) - tailLine
-			end := len(lines) - 1
+			begin := int64(length) - tailLine
 			if begin < 0 {
 				begin = 0
 			}
-			if end > 0 {
-				for _, line := range lines[begin:end] {
-					println(line)
-				}
-			}
+			lines = lines[begin : len(lines)-1]
 			firstTail = false
-			output = ioutil.Discard
-		} else {
-			_, err = io.CopyN(ioutil.Discard, prefixReader, offset)
-			utils.Check(err)
-			output = os.Stdout
 		}
-		lenT, err := io.Copy(output, prefixReader)
-		if err != nil && err != io.EOF {
-			log.Println(err)
-			return err
+		for _, line := range lines {
+			println(re.ReplaceAllString(prefix+line, ``))
 		}
-		atomic.AddInt64(&offset, lenT)
+		atomic.AddInt64(&offset, int64(length))
 		if !IsRunning(job.Status) {
 			return nil
 		}

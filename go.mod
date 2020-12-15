@@ -8,7 +8,6 @@ require (
 	github.com/fatih/color v1.7.0
 	github.com/fsnotify/fsnotify v1.4.9 // indirect
 	github.com/golang/protobuf v1.4.3 // indirect
-	github.com/goware/prefixer v0.0.0-20160118172347-395022866408
 	github.com/hashicorp/go-retryablehttp v0.6.8 // indirect
 	github.com/kballard/go-shellquote v0.0.0-20180428030007-95032a82bc51
 	github.com/kr/text v0.2.0 // indirect
