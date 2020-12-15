@@ -6,7 +6,6 @@ import (
 	"io"
 	"os"
 	"os/exec"
-	"runtime"
 	"strings"
 
 	"github.com/ackerr/lab/utils"
@@ -87,11 +86,6 @@ func checkFZF() bool {
 }
 
 func withFilter(command string, input func(in io.WriteCloser)) []string {
-	term := os.Getenv("TERM")
-	if runtime.GOOS == "windows" && term == "srceen-256color" {
-		os.Setenv("TERM", "")
-		defer os.Setenv("TERM", term)
-	}
 	shell := os.Getenv("SHELL")
 	if len(shell) == 0 {
 		shell = "sh"

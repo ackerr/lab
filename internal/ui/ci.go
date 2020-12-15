@@ -113,7 +113,7 @@ func (m JobModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			if err != nil {
 				return m, tea.Quit
 			}
-		case "V":
+		case "v", "V":
 			m.event = 2
 			return m, nil
 		}
@@ -209,7 +209,7 @@ func viewHelp() string {
    o : open job page in browser
    r : refresh job status
    R : retry current job or run the manual job
-   V : view the chosen job trace
+   v: view the chosen job trace
    <tab> or <enter> : select current job
 	`
 
