@@ -6,7 +6,6 @@ import (
 	"regexp"
 	"strings"
 	"sync"
-	"sync/atomic"
 	"time"
 
 	"github.com/ackerr/lab/utils"
@@ -120,7 +119,7 @@ func IsRunning(status string) bool {
 var re = regexp.MustCompile(`\x1b\[0m.*\[0K`)
 
 func DoTrace(client *gitlab.Client, pid interface{}, job *gitlab.Job, tailLine int64) error {
-	var offset int64
+	var offset int64 = 0
 	firstTail := true
 	prefix := utils.RandomColor(fmt.Sprintf("[%s] ", job.Name))
 	for range time.NewTicker(interval).C {
@@ -138,10 +137,10 @@ func DoTrace(client *gitlab.Client, pid interface{}, job *gitlab.Job, tailLine i
 			lines = lines[begin : len(lines)-1]
 			firstTail = false
 		}
-		for _, line := range lines {
+		for _, line := range lines[offset:] {
 			println(re.ReplaceAllString(prefix+line, ``))
 		}
-		atomic.AddInt64(&offset, int64(length))
+		offset = int64(length)
 		if !IsRunning(job.Status) {
 			return nil
 		}
