@@ -5,9 +5,12 @@ builds:
 - env:
   - CGO_ENABLED=0
   goos:
-  - linux
-  - windows
-  - darwin
+    - linux
+    - windows
+    - darwin
+  goarch:
+    - amd64
+    - arm64
 archives:
 - name_template: '{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}'
   replacements:
@@ -26,6 +29,8 @@ changelog:
     exclude:
     - '^docs:'
     - '^test:'
+    - 'Bump version'
+    - 'Merge pull request'
 brews:
 - tap:
     owner: Ackerr
