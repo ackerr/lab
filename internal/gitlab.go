@@ -21,7 +21,6 @@ var (
 const interval = 3 * time.Second
 
 func NewClient() *gitlab.Client {
-	Setup()
 	path := gitlab.WithBaseURL(strings.Join([]string{Config.BaseURL, "api", apiVersion}, "/"))
 	client, err := gitlab.NewClient(Config.Token, path)
 	if err != nil {

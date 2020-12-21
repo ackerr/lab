@@ -25,7 +25,6 @@ var cloneCmd = &cobra.Command{
 }
 
 func cloneRepo(cmd *cobra.Command, args []string) {
-	internal.Setup()
 	project := internal.FuzzyLine(internal.ProjectPath)
 	if project == "" {
 		return

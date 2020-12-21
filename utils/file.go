@@ -1,6 +1,9 @@
 package utils
 
-import "os"
+import (
+	"io/ioutil"
+	"os"
+)
 
 func FileExists(path string) bool {
 	_, err := os.Stat(path)
@@ -8,4 +11,11 @@ func FileExists(path string) bool {
 		return os.IsExist(err)
 	}
 	return true
+}
+
+func CopyFile(source string, target string) {
+	buf, err := ioutil.ReadFile(source)
+	Check(err)
+	err = ioutil.WriteFile(target, buf, 0644)
+	Check(err)
 }

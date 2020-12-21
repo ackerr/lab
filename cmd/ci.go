@@ -28,7 +28,6 @@ var ciCmd = &cobra.Command{
 }
 
 func currentJobs(cmd *cobra.Command, args []string) {
-	internal.Setup()
 	tailLine, err := cmd.Flags().GetInt64("lines")
 	utils.Check(err)
 	if tailLine == 0 {

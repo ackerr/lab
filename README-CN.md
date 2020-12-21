@@ -49,39 +49,6 @@ $ go get -u "github.com/ackerr/lab"
 
 > 配置文件路径: `~/.config/lab/config.toml`
 
-推荐使用`lab config`编辑配置，此配置会通过$EDITOR环境变量编辑配置文件，如果配置文件不存在，则会使用模板配置新建
-
-全部配置如下：
+推荐使用`lab config`编辑配置，此配置会通过$EDITOR环境变量编辑配置文件，如果配置文件不存在，则会使用[[默认配置](https://github.com/Ackerr/lab/blob/master/README.md)新建
 
 > 其中base_url和token为必填项。token获取方式可参考[这里](https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html#creating-a-personal-access-token)
-
-```
-[gitlab]
-# gitlab domain, 比如`https://gitlab.com`
-base_url = $GITLAB_BASE_URL
-
-# Gitlab access token
-token = $GITLAB_TOKEN
-
-# lab clone and lab ws will use this path as target path
-# default empty
-codespace = ""
-
-# lab clone will auto set user.name in gitconfig if you set
-# default empty
-name = ""
-
-# lab clone will auto set user.email in gitconfig if you set
-# default empty
-email = ""
-
-[main]
-# If set 1, it will use fzf as fuzzy finder, default use go-fuzzyfinder
-# default 0
-fzf = 0
-
-# lab clone extra custom git clone config
-# example `clone_opts="--origin ackerr --branch fix"`
-# default empty
-clone_opts = ""
-```

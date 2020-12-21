@@ -14,18 +14,18 @@ import (
 var maxDepth int
 
 func init() {
-	rootCmd.AddCommand(wsCmd)
-	wsCmd.Flags().IntVarP(&maxDepth, "depth", "d", 5, "maximum depth to filepath walk")
+	rootCmd.AddCommand(csCmd)
+	csCmd.Flags().IntVarP(&maxDepth, "depth", "d", 5, "maximum depth to filepath walk")
 }
 
-var wsCmd = &cobra.Command{
-	Use:   "ws",
-	Short: "Search repo in your codespace",
-	Run:   ws,
+var csCmd = &cobra.Command{
+	Use:     "cs",
+	Aliases: []string{"ws"},
+	Short:   "Search repo in your codespace",
+	Run:     searchCodespace,
 }
 
-func ws(_ *cobra.Command, args []string) {
-	internal.Setup()
+func searchCodespace(_ *cobra.Command, args []string) {
 	codespace := internal.Config.Codespace
 	if codespace == "" {
 		utils.Err("use <lab config> to set codespace first")

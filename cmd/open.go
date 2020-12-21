@@ -25,7 +25,6 @@ var openCmd = &cobra.Command{
 }
 
 func openCurrentRepo(cmd *cobra.Command, args []string) {
-	internal.Setup()
 	if _, err := internal.CurrentGitRepo(); err != nil {
 		return
 	}

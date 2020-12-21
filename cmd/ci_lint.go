@@ -25,7 +25,6 @@ var lintCmd = &cobra.Command{
 func lint(cmd *cobra.Command, args []string) {
 	var path string
 	var err error
-	internal.Setup()
 	if len(args) > 0 {
 		path = args[0]
 		path, err = filepath.Abs(path)
