@@ -49,6 +49,6 @@ $ go get -u "github.com/ackerr/lab"
 
 > 配置文件路径: `~/.config/lab/config.toml`
 
-推荐使用`lab config`编辑配置，此配置会通过$EDITOR环境变量编辑配置文件，如果配置文件不存在，则会使用[[默认配置](https://github.com/Ackerr/lab/blob/master/README.md)新建
+推荐使用`lab config`编辑配置，此配置会通过$EDITOR环境变量编辑配置文件，如果配置文件不存在，则会使用[[默认配置](https://github.com/Ackerr/lab/blob/master/config.toml)新建
 
 > 其中base_url和token为必填项。token获取方式可参考[这里](https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html#creating-a-personal-access-token)

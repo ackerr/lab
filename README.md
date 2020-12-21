@@ -46,6 +46,6 @@ $ go get -u "github.com/ackerr/lab"
 
 ## Configure
 
-Recommend use `lab config` to edit config file (`~/.config/lab/config.toml`), this command will open the config file use $EDITOR. If config file don't exist, it will auto generate by [config template](https://github.com/Ackerr/lab/blob/master/README.md) . 
+Recommend use `lab config` to edit config file (`~/.config/lab/config.toml`), this command will open the config file use $EDITOR. If config file don't exist, it will auto generate by [config template](https://github.com/Ackerr/lab/blob/master/config.toml) . 
 
 > Two variables are required, `base_url` and `token`. The way to get gitlab token, see [this](https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html#creating-a-personal-access-token)
