@@ -1,5 +1,6 @@
 before:
   hooks:
+    - go mod tidy
     - go mod download
 builds:
 - env:
@@ -22,15 +23,15 @@ archives:
 checksum:
   name_template: 'checksums.txt'
 snapshot:
-  name_template: "{{ .Tag }}-next"
+  name_template: "{{ .Tag }}"
 changelog:
   sort: asc
   filters:
     exclude:
-    - '^docs:'
-    - '^test:'
-    - 'Bump version'
-    - 'Merge pull request'
+      - '^docs:'
+      - '^test:'
+      - 'Bump version'
+      - 'Merge pull request'
 brews:
 - tap:
     owner: Ackerr
