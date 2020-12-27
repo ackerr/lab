@@ -98,8 +98,8 @@ func setup() {
 	if strings.HasPrefix(codespace, "~") {
 		codespace = filepath.Join(home, codespace[1:])
 	}
-	if strings.HasSuffix(codespace, "/") {
-		codespace = codespace[:len(codespace)-1]
+	if strings.HasSuffix(codespace, string(os.PathSeparator)) {
+		codespace = codespace[:len(codespace)-len(string(os.PathSeparator))]
 	}
 	Config.Codespace = codespace
 	if Config.Projects == "" {

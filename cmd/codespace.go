@@ -30,13 +30,13 @@ func searchCodespace(_ *cobra.Command, args []string) {
 	if codespace == "" {
 		utils.Err("use <lab config> to set codespace first")
 	}
-	baseDepth := strings.Count(codespace, "/")
-	projects := []string{}
+	baseDepth := strings.Count(codespace, string(os.PathSeparator))
+	var projects []string
 	err := filepath.Walk(codespace, func(path string, fileInfo os.FileInfo, err error) error {
 		if err != nil {
 			return filepath.SkipDir
 		}
-		currentDepth := strings.Count(path, "/") - baseDepth
+		currentDepth := strings.Count(path, string(os.PathSeparator)) - baseDepth
 		if currentDepth > maxDepth {
 			return filepath.SkipDir
 		}
@@ -57,5 +57,5 @@ func searchCodespace(_ *cobra.Command, args []string) {
 	if path == "" {
 		return
 	}
-	fmt.Printf("%s/%s", codespace, path)
+	fmt.Println(filepath.Join(codespace, projects[0]))
 }
