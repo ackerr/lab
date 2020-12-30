@@ -23,6 +23,7 @@ var lintCmd = &cobra.Command{
 }
 
 func lint(cmd *cobra.Command, args []string) {
+	internal.Setup()
 	var path string
 	var err error
 	if len(args) > 0 {

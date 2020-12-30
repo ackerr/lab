@@ -39,7 +39,6 @@ func SetupConfig() {
 	viper.AddConfigPath(LabDir)
 	err = viper.ReadConfig(bytes.NewReader(buf))
 	utils.Check(err)
-	setup()
 }
 
 type gitlabConfig struct {
@@ -58,7 +57,7 @@ type mainConfig struct {
 	CloneOpts      string `toml:"clone_opts"`
 }
 
-func setup() {
+func Setup() {
 	// init main config
 	MainConfig = &mainConfig{}
 	viper.SetDefault("main.theme_color", "79")

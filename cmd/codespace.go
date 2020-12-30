@@ -26,6 +26,7 @@ var csCmd = &cobra.Command{
 }
 
 func searchCodespace(_ *cobra.Command, args []string) {
+	internal.Setup()
 	codespace := internal.Config.Codespace
 	if codespace == "" {
 		utils.Err("use <lab config> to set codespace first")

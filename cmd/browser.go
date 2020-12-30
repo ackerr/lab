@@ -21,6 +21,7 @@ var browserCmd = &cobra.Command{
 }
 
 func openURL(cmd *cobra.Command, args []string) {
+	internal.Setup()
 	var project string
 	if len(args) > 0 {
 		project = args[0]
