@@ -2,6 +2,7 @@ package internal
 
 import (
 	"bytes"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -11,6 +12,40 @@ import (
 	"github.com/mitchellh/mapstructure"
 	"github.com/spf13/viper"
 )
+
+var content = []byte(`[gitlab]
+# gitlab domain, like https://gitlab.com
+base_url = "$GITLAB_BASE_URL"
+
+# gitlab access token
+token = "$GITLAB_TOKEN"
+
+# gitlab projects file
+# default $HOME/config/.lab/.projects
+projects = ""
+
+# If set, lab clone and lab ws will use this path as target path
+# default empty
+codespace = ""
+
+# If set, lab clone will auto set user.name in repo gitconfig
+# default empty
+name = ""
+
+# If set, lab clone will auto set user.email in repo gitconfig
+# default empty
+email = ""
+
+[main]
+# If set 1, it will use fzf as fuzzy finder, default use go-fuzzyfinder
+# default 0
+fzf = 0
+
+# lab clone extra custom git clone config
+# example clone_opts="--origin ackerr --branch fix"
+# default empty
+clone_opts = ""
+`)
 
 var (
 	// Config global gitlab config
@@ -32,7 +67,9 @@ func SetupConfig() {
 		ConfigPath = filepath.Join(LabDir, "config.toml")
 	}
 	if _, err := os.Stat(ConfigPath); os.IsNotExist(err) {
-		utils.CopyFile("config.toml", ConfigPath)
+		err := ioutil.WriteFile(ConfigPath, content, 0644)
+		utils.Check(err)
+		// utils.CopyFile("config.toml", ConfigPath)
 	}
 	buf, err := envsubst.ReadFile(ConfigPath)
 	utils.Check(err)
