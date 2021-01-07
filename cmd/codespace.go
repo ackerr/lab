@@ -58,5 +58,5 @@ func searchCodespace(_ *cobra.Command, args []string) {
 	if path == "" {
 		return
 	}
-	fmt.Println(filepath.Join(codespace, projects[0]))
+	fmt.Println(filepath.Join(codespace, path))
 }

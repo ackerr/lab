@@ -11,7 +11,8 @@ builds:
     - darwin
   goarch:
     - amd64
-    - arm64
+    - arm
+    - '386'
 archives:
 - name_template: '{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}'
   replacements:
@@ -26,12 +27,6 @@ snapshot:
   name_template: "{{ .Tag }}"
 changelog:
   sort: asc
-  filters:
-    exclude:
-      - '^docs:'
-      - '^test:'
-      - 'Bump version'
-      - 'Merge pull request'
 brews:
 - tap:
     owner: Ackerr
