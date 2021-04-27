@@ -13,7 +13,7 @@
 ```
 lab sync     同步gitlab项目至本地
 lab browser  模糊搜索项目名, 回车后，默认浏览器中打开项目地址
-lab ws       模糊搜索codespace中的项目，可配合cd，rm使用
+lab cs       模糊搜索codespace中的项目，可配合cd，rm使用
 lab clone    模糊搜索项目名, 如果设置了codespace, 会将项目clone至codespace，
              否则在当前目录，当然也可以通过--current(-c)，clone至当前路径
 lab lint     校验.gitlab-ci.yml文件格式
@@ -66,7 +66,7 @@ token = "$GITLAB_TOKEN"
 # 默认地址为 $HOME/config/.lab/.projects
 projects = ""
 
-# 项目存放目录，设置后，lab clone / lab ws 会使用该值作为目标目录
+# 项目存放目录，设置后，lab clone / lab cs 会使用该值作为目标目录
 # 默认为空
 codespace = ""
 

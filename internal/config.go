@@ -24,7 +24,7 @@ token = "$GITLAB_TOKEN"
 # default $HOME/config/.lab/.projects
 projects = ""
 
-# If set, lab clone and lab ws will use this path as target path
+# If set, lab clone and lab cs will use this path as target path
 # default empty
 codespace = ""
 

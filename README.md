@@ -14,7 +14,7 @@ A fuzzy finder command line tool for gitlab. [中文文档](./README-CN.md)
 lab sync        Sync gitlab projects
 lab browser     Fuzzy find gitlab repo and open it in $BROWSER
 lab clone       Fuzzy find gitlab repo and clone it
-lab ws          Fuzzy find repo in your codespace
+lab cs          Fuzzy find repo in your codespace
 lab lint        Check .gitlab-ci.yml syntax
 lab open        Open the current repo remote in $BROWSER
 lab config      Use $EDITOR open config file, support custom config path, use --config filepath
