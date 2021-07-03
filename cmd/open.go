@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/ackerr/lab/internal"
 	"github.com/ackerr/lab/utils"
@@ -49,7 +50,7 @@ func openCurrentRepo(cmd *cobra.Command, args []string) {
 			subpage = "merge_requests"
 		}
 	}
-	if len(subpage) > 0 {
+	if !strings.Contains(url, "github.com") && len(subpage) > 0 {
 		url = fmt.Sprintf("%s/-/%s", url, subpage)
 	}
 	err := utils.OpenBrowser(url)
