@@ -38,4 +38,5 @@ func syncProjects(syncAll bool) {
 			fmt.Fprintln(file, n)
 		}
 	}
+	println("Done.")
 }

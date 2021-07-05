@@ -33,8 +33,16 @@ func NewClient() *gitlab.Client {
 func Projects(syncAll bool) []string {
 	client := NewClient()
 	items, totalPage := projects(client, 1, syncAll)
-	bar := progressbar.Default(int64(totalPage), "Syncing")
-
+	bar := progressbar.NewOptions(
+		int(totalPage),
+		progressbar.OptionSetDescription("Syncing"),
+		progressbar.OptionShowBytes(false),
+		progressbar.OptionSetRenderBlankState(false),
+		progressbar.OptionThrottle(65*time.Millisecond),
+		progressbar.OptionSpinnerType(14),
+		progressbar.OptionClearOnFinish(),
+		progressbar.OptionSetPredictTime(false),
+	)
 	allProjects := make([]string, totalPage*prePage)
 	ns := projectNameSpaces(items)
 	copy(allProjects[:len(ns)], ns)
