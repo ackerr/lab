@@ -18,7 +18,10 @@ var (
 	apiVersion = "v4"
 )
 
-const interval = 3 * time.Second
+const (
+	interval = 3 * time.Second
+	throttle = 50 * time.Microsecond
+)
 
 func NewClient() *gitlab.Client {
 	path := gitlab.WithBaseURL(strings.Join([]string{Config.BaseURL, "api", apiVersion}, "/"))
@@ -33,8 +36,15 @@ func NewClient() *gitlab.Client {
 func Projects(syncAll bool) []string {
 	client := NewClient()
 	items, totalPage := projects(client, 1, syncAll)
-	bar := progressbar.Default(int64(totalPage), "Syncing")
-
+	bar := progressbar.NewOptions(
+		totalPage,
+		progressbar.OptionSetDescription("Syncing"),
+		progressbar.OptionShowBytes(false),
+		progressbar.OptionSetRenderBlankState(false),
+		progressbar.OptionThrottle(throttle),
+		progressbar.OptionClearOnFinish(),
+		progressbar.OptionSetPredictTime(false),
+	)
 	allProjects := make([]string, totalPage*prePage)
 	ns := projectNameSpaces(items)
 	copy(allProjects[:len(ns)], ns)
