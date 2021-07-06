@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -57,5 +58,5 @@ func searchCodespace(_ *cobra.Command, args []string) {
 	if path == "" {
 		return
 	}
-	println(filepath.Join(codespace, path))
+	fmt.Println(filepath.Join(codespace, path))
 }
