@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"fmt"
 	"os"
 	"os/signal"
 	"path/filepath"
@@ -20,40 +21,41 @@ func init() {
 
 var cloneCmd = &cobra.Command{
 	Use:   "clone",
-	Short: "Clone the gitlab project, like git clone",
+	Short: "Clone the gitlab projects, like git clone",
 	Run:   cloneRepo,
 }
 
 func cloneRepo(cmd *cobra.Command, args []string) {
 	internal.Setup()
-	project := internal.FuzzyLine(internal.ProjectPath)
-	if project == "" {
+	projects := internal.FuzzyLines(internal.ProjectPath)
+	if len(projects) == 0 {
 		return
 	}
 
-	var path, gitURL string
-	if len(args) > 0 {
-		path = args[0]
-	} else {
-		path, _ = os.Getwd()
-		dir := strings.Split(project, "/")
-		path = strings.Join([]string{path, dir[len(dir)-1]}, "/")
+	isHTTPS, _ := cmd.Flags().GetBool("https")
+	isCurrent, _ := cmd.Flags().GetBool("current")
+	for _, p := range projects {
+		fmt.Println(utils.ColorFg("Cloning "+p, internal.MainConfig.ThemeColor))
+		clone(p, isHTTPS, isCurrent)
 	}
+}
 
+func clone(project string, isHTTPS, isCurrent bool) {
+	var gitURL, path string
 	baseURL := internal.Config.BaseURL
 	if strings.HasPrefix(baseURL, "http") {
 		baseURL = strings.Split(baseURL, "://")[1]
 	}
 
-	useHTTPS, _ := cmd.Flags().GetBool("https")
-	if !useHTTPS {
+	if !isHTTPS {
 		gitURL = strings.Join([]string{"git@", baseURL, ":", project, ".git"}, "")
 	} else {
 		gitURL = strings.Join([]string{internal.Config.BaseURL, project}, "/")
 	}
-	current, _ := cmd.Flags().GetBool("current")
 	codespace := internal.Config.Codespace
-	if !current && len(codespace) > 0 {
+	sign := make(chan os.Signal, 1)
+	signal.Notify(sign, syscall.SIGINT, syscall.SIGTERM)
+	if !isCurrent && len(codespace) > 0 {
 		dirs := []string{codespace, baseURL}
 		dirs = append(dirs, strings.Split(project, "/")...)
 		path = filepath.Join(dirs...)
@@ -62,15 +64,16 @@ func cloneRepo(cmd *cobra.Command, args []string) {
 			return
 		}
 		err := os.MkdirAll(path, 0755)
+		go func() {
+			<-sign
+			_ = os.Remove(path)
+		}()
 		utils.Check(err)
+	} else {
+		// current path
+		path, _ = os.Getwd()
+		dir := strings.Split(project, "/")
+		path = strings.Join([]string{path, dir[len(dir)-1]}, "/")
 	}
-
-	// if clone abort, remove the empty directory
-	sign := make(chan os.Signal, 1)
-	signal.Notify(sign, syscall.SIGINT, syscall.SIGTERM)
-	go func() {
-		<-sign
-		_ = os.Remove(path)
-	}()
 	_ = internal.Clone(gitURL, path)
 }
