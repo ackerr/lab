@@ -13,6 +13,8 @@ builds:
     - amd64
     - arm
     - '386'
+  ldflags:
+    - -s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{ .CommitDate }} -X main.builtBy=goreleaser
 archives:
 - name_template: '{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}'
   replacements:
@@ -27,6 +29,11 @@ snapshot:
   name_template: "{{ .Tag }}"
 changelog:
   sort: asc
+  filters:
+    exclude:
+    - '^docs:'
+    - 'Merge pull request'
+    - 'Bump version'
 brews:
 - tap:
     owner: Ackerr
