@@ -35,7 +35,11 @@ func FuzzyFinder(lines []string) (filtered string) {
 				fmt.Fprintln(in, line)
 			}
 		})
-		filtered = filters[0]
+		if len(filters) == 0 {
+			filtered = ""
+		} else {
+			filtered = filters[0]
+		}
 	} else {
 		index, err := fuzzyfinder.Find(lines, func(i int) string {
 			return lines[i]
