@@ -49,7 +49,7 @@ func lint(cmd *cobra.Command, args []string) {
 	utils.Check(err)
 	if result.Status != "valid" {
 		for _, e := range result.Errors {
-			fmt.Println(utils.ColorBg("ERROR", "#F08080)"), e)
+			fmt.Println(utils.ColorBg("ERROR", "#F08080"), e)
 		}
 	}
 }

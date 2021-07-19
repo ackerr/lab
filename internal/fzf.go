@@ -1,7 +1,6 @@
 package internal
 
 import (
-	"bufio"
 	"fmt"
 	"io"
 	"os"
@@ -12,33 +11,23 @@ import (
 	"github.com/ktr0731/go-fuzzyfinder"
 )
 
-func readLines(filePath string) (lines []string, err error) {
-	file, err := os.Open(filePath)
-	if err != nil {
-		msg := fmt.Sprintf("file %s doesn't exist, please run `lab sync` first", filePath)
-		utils.Err(msg)
-	}
-	defer file.Close()
-	buffer := bufio.NewReader(file)
-	for {
-		value, _, err := buffer.ReadLine()
-		if err == io.EOF {
-			break
-		}
-		lines = append(lines, string(value))
-	}
-	return lines, err
-}
-
 // FuzzyLine : fuzzy finder file line
 func FuzzyLine(filePath string) string {
-	lines, err := readLines(filePath)
+	lines, err := utils.ReadLines(filePath)
 	utils.Check(err)
 	filtered := FuzzyFinder(lines)
 	return filtered
 }
 
-// FuzzyFinder : fuzzy finder a content, if enter ctrl-c will return ""
+// FuzzyLine : fuzzy finder file lines
+func FuzzyLines(filePath string) []string {
+	lines, err := utils.ReadLines(filePath)
+	utils.Check(err)
+	filtered := FuzzyMultiFinder(lines)
+	return filtered
+}
+
+// FuzzyFinder : fuzzy finder content
 func FuzzyFinder(lines []string) (filtered string) {
 	if checkFZF() {
 		filters := withFilter("fzf", func(in io.WriteCloser) {
@@ -46,11 +35,18 @@ func FuzzyFinder(lines []string) (filtered string) {
 				fmt.Fprintln(in, line)
 			}
 		})
-		filtered = filters[0]
+		if len(filters) == 0 {
+			filtered = ""
+		} else {
+			filtered = filters[0]
+		}
 	} else {
 		index, err := fuzzyfinder.Find(lines, func(i int) string {
 			return lines[i]
 		})
+		if err == fuzzyfinder.ErrAbort {
+			return
+		}
 		utils.Check(err)
 		filtered = lines[index]
 	}
@@ -69,6 +65,9 @@ func FuzzyMultiFinder(lines []string) (filtered []string) {
 		index, err := fuzzyfinder.FindMulti(lines, func(i int) string {
 			return lines[i]
 		})
+		if err == fuzzyfinder.ErrAbort {
+			return
+		}
 		utils.Check(err)
 		for _, i := range index {
 			filtered = append(filtered, lines[i])
@@ -97,6 +96,9 @@ func withFilter(command string, input func(in io.WriteCloser)) []string {
 		input(in)
 		in.Close()
 	}()
-	result, _ := cmd.Output()
-	return strings.Split(string(result), "\n")
+	result, err := cmd.Output()
+	if _, ok := err.(*exec.ExitError); ok {
+		return nil
+	}
+	return strings.Split(strings.TrimSpace(string(result)), "\n")
 }
