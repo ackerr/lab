@@ -1,19 +1,26 @@
 run:
   timeout: 2m
 
+linters-settings:
+  govet:
+    enable-all: true
+  goimports:
+    local-prefixes: github.com/ackerr/lab
+
 linters:
   enable:
-    - gofmt
-    - golint
     - bodyclose
     - dupl
     - exportloopref
     - goconst
+    - gofmt
     - goimports
     - gomnd
     - goprintffuncname
+    - govet
     - misspell
     - prealloc
+    - revive
     - rowserrcheck
     - unconvert
     - unparam

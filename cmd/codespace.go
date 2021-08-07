@@ -6,16 +6,20 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/spf13/cobra"
+
 	"github.com/ackerr/lab/internal"
 	"github.com/ackerr/lab/utils"
-	"github.com/spf13/cobra"
 )
 
-var maxDepth int
+var (
+	maxDepth     int
+	defaultDepth = 5
+)
 
 func init() {
 	rootCmd.AddCommand(csCmd)
-	csCmd.Flags().IntVarP(&maxDepth, "depth", "d", 5, "maximum depth to filepath walk")
+	csCmd.Flags().IntVarP(&maxDepth, "depth", "d", defaultDepth, "maximum depth to filepath walk")
 }
 
 var csCmd = &cobra.Command{

@@ -3,8 +3,9 @@ package cmd
 import (
 	"os"
 
-	"github.com/ackerr/lab/internal"
 	"github.com/spf13/cobra"
+
+	"github.com/ackerr/lab/internal"
 )
 
 func init() {

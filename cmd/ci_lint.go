@@ -7,9 +7,10 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/spf13/cobra"
+
 	"github.com/ackerr/lab/internal"
 	"github.com/ackerr/lab/utils"
-	"github.com/spf13/cobra"
 )
 
 func init() {

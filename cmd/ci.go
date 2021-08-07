@@ -5,12 +5,13 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/ackerr/lab/internal"
-	"github.com/ackerr/lab/internal/ui"
-	"github.com/ackerr/lab/utils"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/spf13/cobra"
 	"github.com/xanzy/go-gitlab"
+
+	"github.com/ackerr/lab/internal"
+	"github.com/ackerr/lab/internal/ui"
+	"github.com/ackerr/lab/utils"
 )
 
 func init() {
@@ -37,7 +38,7 @@ func currentJobs(cmd *cobra.Command, args []string) {
 	remote, _ := cmd.Flags().GetString("remote")
 	branch, _ := cmd.Flags().GetString("branch")
 
-	if _, err := internal.CurrentGitRepo(); err != nil {
+	if _, err = internal.CurrentGitRepo(); err != nil {
 		return
 	}
 	if branch == "" {

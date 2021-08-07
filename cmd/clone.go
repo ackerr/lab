@@ -8,9 +8,10 @@ import (
 	"strings"
 	"syscall"
 
+	"github.com/spf13/cobra"
+
 	"github.com/ackerr/lab/internal"
 	"github.com/ackerr/lab/utils"
-	"github.com/spf13/cobra"
 )
 
 func init() {
@@ -63,7 +64,7 @@ func clone(project string, isHTTPS, isCurrent bool) {
 			_ = internal.Fetch(path)
 			return
 		}
-		err := os.MkdirAll(path, 0755)
+		err := os.MkdirAll(path, utils.DirPerm)
 		go func() {
 			<-sign
 			_ = os.Remove(path)

@@ -6,10 +6,11 @@ import (
 	"sync"
 	"time"
 
-	"github.com/ackerr/lab/internal"
-	"github.com/ackerr/lab/utils"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/xanzy/go-gitlab"
+
+	"github.com/ackerr/lab/internal"
+	"github.com/ackerr/lab/utils"
 )
 
 type event int
@@ -37,6 +38,7 @@ func NewJobUI(client *gitlab.Client, pid interface{}, jobs []*gitlab.Job, tailLi
 	}
 }
 
+// nolint:govet
 type JobModel struct {
 	wg       *sync.WaitGroup
 	client   *gitlab.Client
@@ -137,11 +139,11 @@ func (m *JobModel) refreshJobStatus() {
 	for i, job := range m.choices {
 		if internal.IsRunning(job.Status) {
 			go func(index, jobID int) {
-				job, _, err := m.client.Jobs.GetJob(m.pid, jobID)
+				j, _, err := m.client.Jobs.GetJob(m.pid, jobID)
 				if err != nil {
 					log.Println(err)
 				}
-				m.choices[index] = job
+				m.choices[index] = j
 			}(i, job.ID)
 		}
 	}

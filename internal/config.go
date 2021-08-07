@@ -8,9 +8,10 @@ import (
 	"strings"
 
 	"github.com/a8m/envsubst"
-	"github.com/ackerr/lab/utils"
 	"github.com/mitchellh/mapstructure"
 	"github.com/spf13/viper"
+
+	"github.com/ackerr/lab/utils"
 )
 
 var content = []byte(`[gitlab]
@@ -61,15 +62,14 @@ var decodeOpt = func(config *mapstructure.DecoderConfig) { config.TagName = "tom
 func SetupConfig() {
 	home, _ := os.UserHomeDir()
 	LabDir = filepath.Join(home, ".config", "lab")
-	err := os.MkdirAll(LabDir, 0755)
+	err := os.MkdirAll(LabDir, utils.DirPerm)
 	utils.Check(err)
 	if ConfigPath == "" {
 		ConfigPath = filepath.Join(LabDir, "config.toml")
 	}
-	if _, err := os.Stat(ConfigPath); os.IsNotExist(err) {
-		err := ioutil.WriteFile(ConfigPath, content, 0644)
+	if _, err = os.Stat(ConfigPath); os.IsNotExist(err) {
+		err = ioutil.WriteFile(ConfigPath, content, utils.FilePerm)
 		utils.Check(err)
-		// utils.CopyFile("config.toml", ConfigPath)
 	}
 	buf, err := envsubst.ReadFile(ConfigPath)
 	utils.Check(err)
@@ -89,9 +89,9 @@ type gitlabConfig struct {
 
 type mainConfig struct {
 	ThemeColor     string `toml:"theme_color"`
+	CloneOpts      string `toml:"clone_opts"`
 	TailLineNumber int64  `toml:"tail_line_number"`
 	FZF            bool   `toml:"fzf"`
-	CloneOpts      string `toml:"clone_opts"`
 }
 
 func Setup() {
@@ -123,10 +123,7 @@ func Setup() {
 	if !strings.HasPrefix(baseURL, "http") {
 		baseURL = "https://" + baseURL
 	}
-	if strings.HasSuffix(baseURL, "/") {
-		baseURL = baseURL[:len(baseURL)-1]
-	}
-	Config.BaseURL = baseURL
+	Config.BaseURL = strings.TrimSuffix(baseURL, "/")
 
 	home, err := os.UserHomeDir()
 	utils.Check(err)

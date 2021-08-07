@@ -8,9 +8,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/ackerr/lab/utils"
 	"github.com/schollz/progressbar/v3"
 	"github.com/xanzy/go-gitlab"
+
+	"github.com/ackerr/lab/utils"
 )
 
 var (
@@ -128,7 +129,7 @@ func IsRunning(status string) bool {
 var re = regexp.MustCompile(`\x1b\[0m.*\[0K`)
 
 func DoTrace(client *gitlab.Client, pid interface{}, job *gitlab.Job, tailLine int64) error {
-	var offset int64 = 0
+	var offset int64
 	firstTail := true
 	prefix := utils.RandomColor(fmt.Sprintf("[%s] ", job.Name))
 	for range time.NewTicker(interval).C {

@@ -7,8 +7,9 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/ackerr/lab/utils"
 	"github.com/ktr0731/go-fuzzyfinder"
+
+	"github.com/ackerr/lab/utils"
 )
 
 // FuzzyLine : fuzzy finder file line

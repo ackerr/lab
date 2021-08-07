@@ -7,6 +7,11 @@ import (
 	"os"
 )
 
+const (
+	FilePerm = 0644
+	DirPerm  = 0755
+)
+
 func FileExists(path string) bool {
 	_, err := os.Stat(path)
 	if err != nil {
@@ -24,8 +29,8 @@ func ReadLines(filePath string) (lines []string, err error) {
 	defer file.Close()
 	buffer := bufio.NewReader(file)
 	for {
-		value, _, err := buffer.ReadLine()
-		if err == io.EOF {
+		value, _, e := buffer.ReadLine()
+		if e == io.EOF {
 			break
 		}
 		lines = append(lines, string(value))
