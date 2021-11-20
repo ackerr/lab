@@ -2,11 +2,11 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/mattn/go-colorable"
 	"net/http"
 	"strings"
 
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/mattn/go-colorable"
 	"github.com/spf13/cobra"
 	"github.com/xanzy/go-gitlab"
 

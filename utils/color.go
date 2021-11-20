@@ -2,11 +2,11 @@ package utils
 
 import (
 	"fmt"
-	"github.com/mattn/go-colorable"
 	"math/rand"
 	"time"
 
 	"github.com/fatih/color"
+	"github.com/mattn/go-colorable"
 	"github.com/muesli/termenv"
 )
 
