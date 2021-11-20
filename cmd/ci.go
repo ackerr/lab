@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/mattn/go-colorable"
 	"net/http"
 	"strings"
 
@@ -80,7 +81,7 @@ func currentJobs(cmd *cobra.Command, args []string) {
 
 func jobUI(client *gitlab.Client, pid interface{}, jobs []*gitlab.Job, tailLine int64) {
 	model := ui.NewJobUI(client, pid, jobs, tailLine)
-	program := tea.NewProgram(model)
+	program := tea.NewProgram(model, tea.WithOutput(colorable.NewColorableStdout()))
 	err := program.Start()
 	utils.Check(err)
 }

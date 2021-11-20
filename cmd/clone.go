@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"fmt"
 	"os"
 	"os/signal"
 	"path/filepath"
@@ -36,7 +35,7 @@ func cloneRepo(cmd *cobra.Command, args []string) {
 	isHTTPS, _ := cmd.Flags().GetBool("https")
 	isCurrent, _ := cmd.Flags().GetBool("current")
 	for _, p := range projects {
-		fmt.Println(utils.ColorFg("Cloning "+p, internal.MainConfig.ThemeColor))
+		utils.PrintlnWithColor(utils.ColorFg("Cloning "+p, internal.MainConfig.ThemeColor))
 		clone(p, isHTTPS, isCurrent)
 	}
 }

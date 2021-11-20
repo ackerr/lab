@@ -1,6 +1,8 @@
 package utils
 
 import (
+	"fmt"
+	"github.com/mattn/go-colorable"
 	"math/rand"
 	"time"
 
@@ -8,9 +10,7 @@ import (
 	"github.com/muesli/termenv"
 )
 
-var (
-	term = termenv.ColorProfile()
-)
+var term = termenv.ColorProfile()
 
 var Color = []color.Attribute{
 	color.FgRed,
@@ -20,6 +20,11 @@ var Color = []color.Attribute{
 	color.FgMagenta,
 	color.FgCyan,
 	color.FgWhite,
+}
+
+// PrintlnWithColor fix the color of the output on Windows.
+func PrintlnWithColor(a ...interface{}) {
+	fmt.Fprintln(colorable.NewColorableStdout(), a...)
 }
 
 func RandomColor(in string) string {

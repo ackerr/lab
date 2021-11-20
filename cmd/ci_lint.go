@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -50,7 +49,7 @@ func lint(cmd *cobra.Command, args []string) {
 	utils.Check(err)
 	if result.Status != "valid" {
 		for _, e := range result.Errors {
-			fmt.Println(utils.ColorBg("ERROR", "#F08080"), e)
+			utils.PrintlnWithColor(utils.ColorBg("ERROR", "#F08080"), e)
 		}
 	}
 }
