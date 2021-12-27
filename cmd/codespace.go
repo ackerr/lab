@@ -60,6 +60,8 @@ func searchCodespace(_ *cobra.Command, args []string) {
 	}
 	path := internal.FuzzyFinder(projects)
 	if path == "" {
+		// cancel fzf, return current path
+		fmt.Println(os.Getenv("PWD"))
 		return
 	}
 	fmt.Println(filepath.Join(codespace, path))
