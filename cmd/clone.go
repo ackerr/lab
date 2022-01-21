@@ -16,7 +16,14 @@ import (
 func init() {
 	cloneCmd.Flags().Bool("https", false, "clone with https, default use ssh")
 	cloneCmd.Flags().BoolP("current", "c", false, "clone repo to current directory")
+	cloneCmd.AddCommand(wikiCmd)
 	rootCmd.AddCommand(cloneCmd)
+}
+
+var wikiCmd = &cobra.Command{
+	Use:   "wiki",
+	Short: "clone the current repo wiki",
+	Run:   cloneRepo,
 }
 
 var cloneCmd = &cobra.Command{
@@ -34,7 +41,11 @@ func cloneRepo(cmd *cobra.Command, args []string) {
 
 	isHTTPS, _ := cmd.Flags().GetBool("https")
 	isCurrent, _ := cmd.Flags().GetBool("current")
-	for _, p := range projects {
+	for _, project := range projects {
+		p := project
+		if cmd.Use == "wiki" {
+			p = p + ".wiki"
+		}
 		utils.PrintlnWithColor(utils.ColorFg("Cloning "+p, internal.MainConfig.ThemeColor))
 		clone(p, isHTTPS, isCurrent)
 	}

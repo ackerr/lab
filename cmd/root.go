@@ -11,7 +11,7 @@ import (
 func init() {
 	// init config after cobra command called
 	cobra.OnInitialize(internal.SetupConfig)
-	rootCmd.PersistentFlags().StringVar(&internal.ConfigPath, "config", "", "config file (default is $HOME/.config/lab/config.toml)")
+	rootCmd.PersistentFlags().StringVar(&internal.ConfigPath, "config", "", "target config file (default is $HOME/.config/lab/config.toml)")
 }
 
 var rootCmd = &cobra.Command{
