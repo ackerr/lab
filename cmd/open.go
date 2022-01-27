@@ -51,8 +51,13 @@ func openCurrentRepo(cmd *cobra.Command, args []string) {
 			subpage = "merge_requests"
 		}
 	}
-	if !strings.Contains(url, "github.com") && len(subpage) > 0 {
-		url = fmt.Sprintf("%s/-/%s", url, subpage)
+	if !strings.Contains(url, "github.com") {
+		if len(subpage) > 0 {
+			url = fmt.Sprintf("%s/-/%s", url, subpage)
+		}
+		if url[len(url)-5:] == ".wiki" {
+			url = fmt.Sprintf("%s/-/wikis/", url[:len(url)-5])
+		}
 	}
 	err := utils.OpenBrowser(url)
 	utils.Check(err)
