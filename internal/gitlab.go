@@ -68,9 +68,11 @@ func Projects(syncAll bool) []string {
 }
 
 func projectNameSpaces(projects []*gitlab.Project) []string {
-	ns := make([]string, len(projects))
-	for i, p := range projects {
-		ns[i] = p.PathWithNamespace
+	ns := make([]string, 0)
+	for _, p := range projects {
+		if p.Namespace.Kind == "group" {
+			ns = append(ns, p.PathWithNamespace)
+		}
 	}
 	return ns
 }
