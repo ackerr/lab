@@ -17,7 +17,7 @@ func init() {
 var rootCmd = &cobra.Command{
 	Use:   "lab",
 	Short: "Lab is a cli tool, include some shortcut for gitlab",
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(cmd *cobra.Command, _ []string) {
 		_ = cmd.Help()
 	},
 }

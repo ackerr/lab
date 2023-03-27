@@ -26,7 +26,7 @@ var openCmd = &cobra.Command{
 	Run:   openCurrentRepo,
 }
 
-func openCurrentRepo(cmd *cobra.Command, args []string) {
+func openCurrentRepo(cmd *cobra.Command, _ []string) {
 	internal.Setup()
 	if _, err := internal.CurrentGitRepo(); err != nil {
 		return

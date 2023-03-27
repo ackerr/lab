@@ -18,7 +18,6 @@ lab clone    模糊搜索项目名, 如果设置了codespace, 会将项目clone�
              否则在当前目录，当然也可以通过--current(-c)，clone至当前路径
 lab lint     校验.gitlab-ci.yml文件格式
 lab open     快捷在默认浏览器中打开当前所在项目的web地址
-lab ci       获取当前项目指定远端分支的ci输出
 lab config   快捷打开lab的配置文件
 ```
 

@@ -29,7 +29,7 @@ var csCmd = &cobra.Command{
 	Run:     searchCodespace,
 }
 
-func searchCodespace(_ *cobra.Command, args []string) {
+func searchCodespace(_ *cobra.Command, _ []string) {
 	internal.Setup()
 	codespace := internal.Config.Codespace
 	if codespace == "" {

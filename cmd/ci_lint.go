@@ -22,7 +22,7 @@ var lintCmd = &cobra.Command{
 	Run:   lint,
 }
 
-func lint(cmd *cobra.Command, args []string) {
+func lint(_ *cobra.Command, args []string) {
 	internal.Setup()
 	var path string
 	var err error

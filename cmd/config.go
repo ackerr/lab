@@ -20,7 +20,7 @@ var configCmd = &cobra.Command{
 	Run:   editConfig,
 }
 
-func editConfig(cmd *cobra.Command, args []string) {
+func editConfig(_ *cobra.Command, _ []string) {
 	configPath := internal.ConfigPath
 	editor := utils.GetEnv("EDITOR", "vim")
 	command := exec.Command(editor, configPath)

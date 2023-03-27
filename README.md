@@ -18,7 +18,6 @@ lab cs          Fuzzy find repo in your codespace
 lab lint        Check .gitlab-ci.yml syntax
 lab open        Open the current repo remote in $BROWSER
 lab config      Use $EDITOR open config file, support custom config path, use --config filepath
-lab ci (Beta)   View the pipeline jobs trace log, default view running job
 ```
 
 For more information, please use `lab help`.

@@ -32,7 +32,7 @@ var cloneCmd = &cobra.Command{
 	Run:   cloneRepo,
 }
 
-func cloneRepo(cmd *cobra.Command, args []string) {
+func cloneRepo(cmd *cobra.Command, _ []string) {
 	internal.Setup()
 	projects := internal.FuzzyLines(internal.ProjectPath)
 	if len(projects) == 0 {
