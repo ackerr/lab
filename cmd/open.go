@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/spf13/cobra"
 
@@ -14,8 +13,8 @@ var subpage string
 
 func init() {
 	openCmd.Flags().StringP("remote", "r", "", "the remote's pipeline")
-	openCmd.Flags().BoolP("pipelines", "p", false, "open pipeline page")
-	openCmd.Flags().BoolP("merge_requests", "m", false, "open merge_requests page")
+	openCmd.Flags().BoolP("pipelines", "p", false, "open pipeline page, only support gitlab")
+	openCmd.Flags().BoolP("merge_requests", "m", false, "open merge_requests page, only support gitlab")
 	openCmd.Flags().StringVar(&subpage, "subpage", "", "open the input subpage")
 	rootCmd.AddCommand(openCmd)
 }
@@ -51,13 +50,10 @@ func openCurrentRepo(cmd *cobra.Command, _ []string) {
 			subpage = "merge_requests"
 		}
 	}
-	if !strings.Contains(url, "github.com") {
-		if len(subpage) > 0 {
-			url = fmt.Sprintf("%s/-/%s", url, subpage)
-		}
-		if url[len(url)-5:] == ".wiki" {
-			url = fmt.Sprintf("%s/-/wikis/", url[:len(url)-5])
-		}
+	if url[len(url)-5:] == ".wiki" {
+		url = fmt.Sprintf("%s/wikis", url[:len(url)-5])
+	} else {
+		url = fmt.Sprintf("%s/%s", url, subpage)
 	}
 	err := utils.OpenBrowser(url)
 	utils.Check(err)
