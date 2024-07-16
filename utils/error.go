@@ -17,3 +17,9 @@ func Err(msg ...interface{}) {
 	fmt.Println(msg...)
 	os.Exit(1)
 }
+
+func PrintErr(err error) {
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+}
