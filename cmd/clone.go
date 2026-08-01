@@ -32,11 +32,25 @@ var cloneCmd = &cobra.Command{
 	Run:   cloneRepo,
 }
 
-func cloneRepo(cmd *cobra.Command, _ []string) {
+func cloneRepo(cmd *cobra.Command, args []string) {
 	internal.Setup()
 	projects := internal.FuzzyLines(internal.ProjectPath)
 	if len(projects) == 0 {
 		return
+	}
+
+	if len(args) > 0 {
+		prefix := args[0]
+		var filtered []string
+		for _, p := range projects {
+			if strings.HasPrefix(p, prefix) {
+				filtered = append(filtered, p)
+			}
+		}
+		if len(filtered) == 0 {
+			return
+		}
+		projects = filtered
 	}
 
 	isHTTPS, _ := cmd.Flags().GetBool("https")
